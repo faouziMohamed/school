@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     Int                     @id @default(autoincrement())
+  firstName              String                  @map("first_name")
+  lastName               String                  @map("last_name")
+  email                  String                  @unique
+  phone                  String
+  password               String
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedAt              DateTime                @default(now()) @map("updated_at")
+  role                   UserRole
+  notifications          Notification[]
+  courses                Course[]
+  teacherAttendances     TeacherAttendance[]
+  studentAttendances     StudentAttendance[]
+  teacherCourseSchedules TeacherCourseSchedule[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN   @map("admin")
+  TEACHER @map("teacher")
+  STUDENT @map("student")
+
+  @@map("user_role")
+}
+
+model Classe {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  courses            Course[]
+  studentAttendances StudentAttendance[]
+
+  @@map("classes")
+}
+
+model Notification {
+  id        Int                @id @default(autoincrement())
+  userId    Int                @map("user_id")
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content   String
+  createdAt DateTime           @default(now()) @map("created_at")
+  status    NotificationStatus
+
+  @@map("notifications")
+}
+
+enum NotificationStatus {
+  SEEN    @map("seen")
+  PENDING @map("pending")
+  FAILED  @map("failed")
+
+  @@map("notification_status")
+}
+
+model Course {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  teacherId          Int                 @map("teacher_id")
+  classId            Int                 @map("class_id")
+  classe             Classe              @relation(fields: [classId], references: [id], onDelete: Restrict)
+  teacher            User                @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  teacherAttendances TeacherAttendance[]
+  studentAttendances StudentAttendance[]
+  courseSchedules    CourseSchedule[]
+
+  @@map("courses")
+}
+
+model TeacherAttendance {
+  id            Int              @id @default(autoincrement())
+  teacherId     Int              @map("teacher_id")
+  teacher       User             @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  courseId      Int              @map("course_id")
+  course        Course           @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  date          DateTime
+  justification String
+  status        AttendanceStatus
+
+  @@map("teacher_attendances")
+}
+
+model StudentAttendance {
+  id            Int              @id @default(autoincrement())
+  studentId     Int              @map("student_id")
+  student       User             @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  courseId      Int              @map("course_id")
+  course        Course           @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  classId       Int              @map("class_id")
+  classe        Classe           @relation(fields: [classId], references: [id], onDelete: Restrict)
+  date          DateTime
+  justification String
+  status        AttendanceStatus
+
+  @@map("student_attendances")
+}
+
+enum AttendanceStatus {
+  ATTEND            @map("attend")
+  ABSENT            @map("absent")
+  JUSTIFIED_ABSENCE @map("justified_absence")
+
+  @@map("attendance_status")
+}
+
+model CourseSchedule {
+  id                     Int                     @id @default(autoincrement())
+  courseId               Int                     @map("course_id")
+  course                 Course                  @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  startAt                DateTime
+  endAt                  DateTime
+  teacherCourseSchedules TeacherCourseSchedule[]
+
+  @@map("course_schedules")
+}
+
+model TeacherCourseSchedule {
+  teacherId Int  @map("teacher_id")
+  teacher   User @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  scheduId Int            @map("schedule_id")
+  schedule CourseSchedule @relation(fields: [scheduId], references: [id], onDelete: Cascade)
+
+  @@id([teacherId, scheduId])
+  @@map("teacher_course_schedule")
+}
