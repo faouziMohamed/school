@@ -1,8 +1,3 @@
-export const STUDENT_SELECT = {
-  id: true,
-  email: true,
-  profile: { select: PROFILE_SELECT },
-};
 export const PROFILE_SELECT = {
   id: true,
   firstName: true,
@@ -10,4 +5,10 @@ export const PROFILE_SELECT = {
   phone: true,
   createdAt: true,
   updatedAt: true,
+};
+
+export const STUDENT_SELECT = {
+  id: true,
+  email: true,
+  profile: { select: PROFILE_SELECT },
 };

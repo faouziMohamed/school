@@ -22,7 +22,7 @@ export async function getAllStudents() {
  */
 export async function createNewStudent(studentData) {
   try {
-    const user = await prisma.student.create({
+    const newStudent = await prisma.student.create({
       data: {
         email: studentData.email,
         password: studentData.password,
@@ -38,8 +38,8 @@ export async function createNewStudent(studentData) {
       select: STUDENT_SELECT,
     });
 
-    console.log("user", user);
-    return user;
+    console.log("user", newStudent);
+    return newStudent;
   } catch (error) {
     console.log("error?", error.message);
     return null;
