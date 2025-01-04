@@ -1,22 +1,22 @@
 import {
-  createNewUser,
-  getAllUsers,
-  getUserByEmail,
-} from "@/lib/packages/teachers/teacher.service";
+  createNewStudent,
+  getAllStudents,
+  isStudentExistByEmail,
+} from "@/lib/packages/students/students.service";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const users = await getAllUsers();
-  if (!users) {
+  const students = await getAllStudents();
+  if (!students) {
     return NextResponse.json(
       {
         message: "No user exists on the app, retry later",
-        users: [],
+        students: [],
       },
       { status: 400 }
     );
   }
-  return NextResponse.json({ users });
+  return NextResponse.json({ students });
 }
 
 export async function POST(request) {
@@ -58,8 +58,8 @@ export async function POST(request) {
     );
   }
 
-  const maybeUser = await getUserByEmail(email);
-  if (maybeUser) {
+  const studentExists = await isStudentExistByEmail(email);
+  if (studentExists) {
     return NextResponse.json(
       {
         message: "An account with the provided email already exists",
@@ -69,25 +69,22 @@ export async function POST(request) {
     );
   }
   console.log({ body });
-  /**
-   * @type {import("@prisma/client").User & import("@prisma/client").UserProfile}
-   * */
+
   const data = {
     firstName,
     lastName,
     email,
     phone,
     password,
-    role: "USER",
   };
 
-  const newUser = await createNewUser(data);
-  console.log({ newUser });
-  if (!newUser) {
+  const newStudent = await createNewStudent(data);
+  console.log({ newStudent });
+  if (!newStudent) {
     return NextResponse.json(
       {
         message:
-          "An unexpected error has occured, plese try creating the user later",
+          "An unexpected error has occured, plese try creating the student later",
       },
       { status: 500 }
     );
@@ -95,8 +92,8 @@ export async function POST(request) {
 
   return NextResponse.json(
     {
-      user: newUser,
-      url: `/api/v1/users/${newUser.id}`,
+      user: newStudent,
+      url: `/api/v1/student/${newStudent.id}`,
     },
     { status: 201 }
   );

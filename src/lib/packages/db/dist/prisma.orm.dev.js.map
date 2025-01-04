@@ -1,1 +1,0 @@
-{"version":3,"sources":["prisma.orm.js"],"names":["prisma","PrismaClient"],"mappings":";;;;;;;AAAA;;AAEA,IAAMA,MAAM,GAAG,IAAIC,oBAAJ,EAAf;eAEeD,M","sourcesContent":["import { PrismaClient } from \"@prisma/client\";\r\n\r\nconst prisma = new PrismaClient();\r\n\r\nexport default prisma;\r\n"],"file":"prisma.orm.dev.js"}
