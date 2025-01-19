@@ -1,21 +1,21 @@
-'use client';
-import { toaster } from '@/components/ui/toaster';
-import { capitalizeWords } from '@/lib/helpers/utils';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+"use client";
+import { toaster } from "@/components/ui/toaster";
+import { capitalizeWords } from "@/lib/helpers/utils";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const defaultValues = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  password: '',
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  password: "",
 };
 export const requiredFielConfig = {
   value: true,
-  message: 'This field is required',
+  message: "This field is required",
 };
 
 export function useRegisterForm() {
@@ -31,11 +31,11 @@ export function useRegisterForm() {
     setError,
   } = useForm({
     defaultValues,
-    mode: 'all',
+    mode: "all",
     shouldFocusError: true,
-    criteriaMode: 'all',
+    criteriaMode: "all",
   });
-  const [selected, setSelected] = useState('student');
+  const [selected, setSelected] = useState("student");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -50,11 +50,11 @@ export function useRegisterForm() {
       phone: data.phone.trim(),
       password: data.password,
       role: selected,
-      action: 'register',
+      action: "register",
     };
     setIsSubmitting(true);
     try {
-      const response = await signIn('credentials', {
+      const response = await signIn("credentials", {
         ...submitData,
         redirect: false,
       });
@@ -64,12 +64,12 @@ export function useRegisterForm() {
         return;
       }
       toaster.create({
-        type: 'success',
-        title: 'Account created successfully',
+        type: "success",
+        title: "Account created successfully",
         description: `You can now login 🎉`,
         action: {
-          label: 'Login',
-          onClick: () => router.push('/login'),
+          label: "Login",
+          onClick: () => router.push("/login"),
         },
       });
       reset();
@@ -93,21 +93,21 @@ export function useRegisterForm() {
 
 function handleSubmitError(response, setError) {
   const { error } = response;
-  let jsonRes = { message: 'An error occurred', description: '' };
+  let jsonRes = { message: "An error occurred", description: "" };
   try {
     jsonRes = JSON.parse(error);
   } catch (e) {
-    jsonRes = { message: 'An error occurred' };
+    jsonRes = { message: "An error occurred" };
   }
   toaster.create({
-    title: jsonRes?.message || 'An error occurred',
+    title: jsonRes?.message || "An error occurred",
     description:
-      jsonRes?.description || 'Sorry, We could not create your account',
-    type: 'error',
+      jsonRes?.description || "Sorry, We could not create your account",
+    type: "error",
     duration: 7000,
   });
-  setError('email', {
-    type: 'manual',
-    message: jsonRes?.message || 'An error occurred',
+  setError("email", {
+    type: "manual",
+    message: jsonRes?.message || "An error occurred",
   });
 }

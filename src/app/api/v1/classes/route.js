@@ -6,7 +6,7 @@ export async function POST(request) {
   if (!body) {
     return NextResponse.json(
       { message: "A body is expected on the request but none has been found" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -27,7 +27,7 @@ export async function POST(request) {
         message: "Some fields are mandatory but they are missing",
         missingFields,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -43,7 +43,7 @@ export async function POST(request) {
         message:
           "An unexpected error has occured, plese try creating the user later",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -52,6 +52,6 @@ export async function POST(request) {
       classe: newClass,
       url: `/api/v1/classes/${newClass.id}`,
     },
-    { status: 201 }
+    { status: 201 },
   );
 }

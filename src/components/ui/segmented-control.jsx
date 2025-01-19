@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { For, SegmentGroup } from '@chakra-ui/react';
-import * as React from 'react';
+import { For, SegmentGroup } from "@chakra-ui/react";
+import * as React from "react";
 
 function normalize(items) {
   return items.map((item) => {
-    if (typeof item === 'string') return { value: item, label: item };
+    if (typeof item === "string") return { value: item, label: item };
     return item;
   });
 }

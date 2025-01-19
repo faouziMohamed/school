@@ -1,6 +1,6 @@
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import slugify from 'slugify';
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import slugify from "slugify";
 
 export const emailRegex =
   /^(([^\s"(),.:;<>@[\\\]]+(\.[^\s"(),.:;<>@[\\\]]+)*)|(".+"))@((\[(?:\d{1,3}\.){3}\d{1,3}])|(([\dA-Za-z-]+\.)+[A-Za-z]{2,}))$/;
@@ -8,7 +8,7 @@ export const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?!.*\s).{6,30}$/; 
 export const phoneRegex = /^\d{1,15}$/;
 export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 export const capitalizeWords = (str) =>
-  str.split(' ').map(capitalize).join(' ');
+  str.split(" ").map(capitalize).join(" ");
 
 export function genSequence(initialValue = 0) {
   let value = initialValue;
@@ -26,10 +26,10 @@ export function formatDateRelative(date) {
 }
 
 export function generateSlug(title) {
-  const formattedDate = dayjs().format('YYYYMMDDss');
+  const formattedDate = dayjs().format("YYYYMMDDss");
   return `${slugify(title, {
     lower: true,
-    locale: 'fr',
+    locale: "fr",
   })}_${formattedDate}`;
 }
 
@@ -52,20 +52,20 @@ export function getPasswordScore(password) {
   ];
 
   const score = criteria.filter(Boolean).length;
-  let message = '';
+  let message = "";
   // we need to know the missing criteria to display the message to the user
   if (score < 5) {
     const missing = [
-      !lower && '1 lowercase letter',
-      !upper && '1 uppercase letter',
-      !digit && '1 number',
+      !lower && "1 lowercase letter",
+      !upper && "1 uppercase letter",
+      !digit && "1 number",
     ].filter(Boolean);
     if (missing.length === 0 && !minSize) {
-      message = 'The password must contain at least 6 characters';
+      message = "The password must contain at least 6 characters";
     } else if (missing.length <= 3 && !minSize) {
-      message = `The password is missing ${missing.join(', ')} and must contain at least 6 characters`;
+      message = `The password is missing ${missing.join(", ")} and must contain at least 6 characters`;
     } else {
-      message = `The password is missing ${missing.join(', ')}`;
+      message = `The password is missing ${missing.join(", ")}`;
     }
   }
 

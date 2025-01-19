@@ -14,7 +14,7 @@ export async function GET() {
         message: "No user exists on the app, retry later",
         users: [],
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
   return NextResponse.json({ courses });
@@ -25,7 +25,7 @@ export async function POST(request) {
   if (!body) {
     return NextResponse.json(
       { message: "A body is expected on the request but none has been found" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -51,7 +51,7 @@ export async function POST(request) {
         message: "Some fields are mandatory but they are missing",
         missingFields,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -60,7 +60,7 @@ export async function POST(request) {
       {
         message: "teacherId and classId must be numbers",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -72,7 +72,7 @@ export async function POST(request) {
       {
         message: "The teacher does not exist, please provide a valid teacherId",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -82,7 +82,7 @@ export async function POST(request) {
       {
         message: "The class does not exist, please provide a valid classId",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -99,7 +99,7 @@ export async function POST(request) {
         message:
           "An unexpected error has occured, plese try creating the user later",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -108,6 +108,6 @@ export async function POST(request) {
       course: newCourse,
       url: `/api/v1/courses/${newCourse.id}`,
     },
-    { status: 201 }
+    { status: 201 },
   );
 }

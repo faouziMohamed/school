@@ -1,14 +1,14 @@
-'use client';
-import { toaster } from '@/components/ui/toaster';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+"use client";
+import { toaster } from "@/components/ui/toaster";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
-const defaultValues = { email: '', password: '' };
+const defaultValues = { email: "", password: "" };
 export const requiredFielConfig = {
   value: true,
-  message: 'This field is required',
+  message: "This field is required",
 };
 
 export function useLoginForm() {
@@ -24,11 +24,11 @@ export function useLoginForm() {
     setError,
   } = useForm({
     defaultValues,
-    mode: 'all',
+    mode: "all",
     shouldFocusError: true,
-    criteriaMode: 'all',
+    criteriaMode: "all",
   });
-  const [selected, setSelected] = useState('student');
+  const [selected, setSelected] = useState("student");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -40,11 +40,11 @@ export function useLoginForm() {
       email: data.email.trim().toLowerCase(),
       password: data.password,
       role: selected,
-      action: 'login',
+      action: "login",
     };
     setIsSubmitting(true);
     try {
-      const response = await signIn('credentials', {
+      const response = await signIn("credentials", {
         ...submitData,
         redirect: false,
       });
@@ -55,11 +55,11 @@ export function useLoginForm() {
         return;
       }
       toaster.create({
-        type: 'success',
-        title: 'Login successful',
+        type: "success",
+        title: "Login successful",
         description: `Welcome back 👋`,
       });
-      router.push('/');
+      router.push("/");
       reset();
     } catch (error) {
       console.error(error);
@@ -80,25 +80,25 @@ export function useLoginForm() {
 
 function handleSubmitError(response, setError) {
   const { error } = response;
-  let jsonRes = { message: 'An error occurred', description: '' };
+  let jsonRes = { message: "An error occurred", description: "" };
   try {
     jsonRes = JSON.parse(error);
   } catch (e) {
-    jsonRes = { message: 'An error occurred' };
+    jsonRes = { message: "An error occurred" };
   }
   toaster.create({
-    title: jsonRes?.message || 'An error occurred',
+    title: jsonRes?.message || "An error occurred",
     description:
-      jsonRes?.description || 'Sorry, We could not process your request',
-    type: 'error',
+      jsonRes?.description || "Sorry, We could not process your request",
+    type: "error",
     duration: 7000,
   });
-  setError('email', {
-    type: 'manual',
-    message: jsonRes?.message || 'An error occurred',
+  setError("email", {
+    type: "manual",
+    message: jsonRes?.message || "An error occurred",
   });
-  setError('password', {
-    type: 'manual',
-    message: jsonRes?.message || 'An error occurred',
+  setError("password", {
+    type: "manual",
+    message: jsonRes?.message || "An error occurred",
   });
 }

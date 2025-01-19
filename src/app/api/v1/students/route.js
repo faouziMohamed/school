@@ -13,7 +13,7 @@ export async function GET() {
         message: "No user exists on the app, retry later",
         students: [],
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
   return NextResponse.json({ students });
@@ -24,7 +24,7 @@ export async function POST(request) {
   if (!body) {
     return NextResponse.json(
       { message: "A body is expected on the request but none has been found" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -54,7 +54,7 @@ export async function POST(request) {
         message: "Some fields are mandatory but they are missing",
         missingFields,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -65,7 +65,7 @@ export async function POST(request) {
         message: "An account with the provided email already exists",
         signInPath: "/api/v1/sign-in",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
   console.log({ body });
@@ -86,7 +86,7 @@ export async function POST(request) {
         message:
           "An unexpected error has occured, plese try creating the student later",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -95,6 +95,6 @@ export async function POST(request) {
       user: newStudent,
       url: `/api/v1/student/${newStudent.id}`,
     },
-    { status: 201 }
+    { status: 201 },
   );
 }

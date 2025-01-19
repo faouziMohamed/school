@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 /**
  * Hash a password
@@ -39,20 +39,20 @@ export function findMissingField({
 } = {}) {
   const missingFields = [];
   if (!firstName) {
-    missingFields.push('firstName');
+    missingFields.push("firstName");
   }
   if (!lastName) {
-    missingFields.push('lastName');
+    missingFields.push("lastName");
   }
   if (!email) {
-    missingFields.push('email');
+    missingFields.push("email");
   }
   if (!phone) {
-    missingFields.push('phone');
+    missingFields.push("phone");
   }
 
   if (!password) {
-    missingFields.push('password');
+    missingFields.push("password");
   }
   return missingFields;
 }
@@ -82,7 +82,7 @@ export function adaptUserFromDb(newUser, role) {
  * @returns {FrontUserRole}
  */
 export function dbUserRoleToFrontUserRole(dbUserRole) {
-  return dbUserRole === 'USER' ? 'teacher' : 'admin';
+  return dbUserRole === "USER" ? "teacher" : "admin";
 }
 
 /**

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { InputGroup } from './input-group';
-import { getPasswordScore } from '@/lib/helpers/utils';
+import { InputGroup } from "./input-group";
+import { getPasswordScore } from "@/lib/helpers/utils";
 import {
   Box,
   HStack,
@@ -10,10 +10,10 @@ import {
   mergeRefs,
   Stack,
   useControllableState,
-} from '@chakra-ui/react';
-import * as React from 'react';
-import { useRef } from 'react';
-import { LuEye, LuEyeOff } from 'react-icons/lu';
+} from "@chakra-ui/react";
+import * as React from "react";
+import { useRef } from "react";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 
 export const PasswordInput = React.forwardRef(
   function PasswordInput(props, ref) {
@@ -36,7 +36,7 @@ export const PasswordInput = React.forwardRef(
 
     return (
       <InputGroup
-        width='full'
+        width="full"
         endElement={
           <VisibilityTrigger
             disabled={rest.disabled}
@@ -54,12 +54,12 @@ export const PasswordInput = React.forwardRef(
       >
         <Input
           {...rest}
-          css={{ '--focus-color': 'blue' }}
-          placeholder=''
-          variant='outline'
+          css={{ "--focus-color": "blue" }}
+          placeholder=""
+          variant="outline"
           ref={mergeRefs(ref, inputRef)}
-          type={visible ? 'text' : 'password'}
-          className='peer'
+          type={visible ? "text" : "password"}
+          className="peer"
         />
       </InputGroup>
     );
@@ -72,12 +72,12 @@ const VisibilityTrigger = React.forwardRef(
       <IconButton
         tabIndex={-1}
         ref={ref}
-        me='-2'
-        aspectRatio='square'
-        size='sm'
-        variant='ghost'
-        height='calc(100% - {spacing.2})'
-        aria-label='Toggle password visibility'
+        me="-2"
+        aspectRatio="square"
+        size="sm"
+        variant="ghost"
+        height="calc(100% - {spacing.2})"
+        aria-label="Toggle password visibility"
         {...props}
       />
     );
@@ -90,27 +90,27 @@ export const PasswordStrengthMeter = React.forwardRef(
     const { label, colorPalette } = getColorPalette(password);
 
     return (
-      <Stack align='flex-end' gap='1' ref={ref} {...rest}>
-        <HStack width='full' ref={ref} {...rest}>
+      <Stack align="flex-end" gap="1" ref={ref} {...rest}>
+        <HStack width="full" ref={ref} {...rest}>
           {Array.from({ length: 5 }).map((_, index) => (
             <Box
               key={index}
-              height='1'
-              flex='1'
-              rounded='sm'
+              height="1"
+              flex="1"
+              rounded="sm"
               data-selected={
-                index < getPasswordScore(password).score ? '' : undefined
+                index < getPasswordScore(password).score ? "" : undefined
               }
-              layerStyle='fill.subtle'
-              colorPalette='gray'
+              layerStyle="fill.subtle"
+              colorPalette="gray"
               _selected={{
                 colorPalette,
-                layerStyle: 'fill.solid',
+                layerStyle: "fill.solid",
               }}
             />
           ))}
         </HStack>
-        {label && <HStack textStyle='xs'>{label}</HStack>}
+        {label && <HStack textStyle="xs">{label}</HStack>}
       </Stack>
     );
   },
@@ -121,16 +121,16 @@ function getColorPalette(password) {
 
   switch (score) {
     case 1:
-      return { label: 'Very Low', colorPalette: 'red' };
+      return { label: "Very Low", colorPalette: "red" };
     case 2:
-      return { label: 'Low', colorPalette: 'orange' };
+      return { label: "Low", colorPalette: "orange" };
     case 3:
-      return { label: 'Medium', colorPalette: 'yellow' };
+      return { label: "Medium", colorPalette: "yellow" };
     case 4:
-      return { label: 'Good', colorPalette: 'blue' };
+      return { label: "Good", colorPalette: "blue" };
     case 5:
-      return { label: 'High', colorPalette: 'green' };
+      return { label: "High", colorPalette: "green" };
     default:
-      return { label: '', colorPalette: 'gray' };
+      return { label: "", colorPalette: "gray" };
   }
 }

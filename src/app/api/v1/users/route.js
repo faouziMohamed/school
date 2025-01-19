@@ -1,17 +1,17 @@
-import { findMissingField } from '@/lib/helpers/utils.server';
+import { findMissingField } from "@/lib/helpers/utils.server";
 import {
   createNewUser,
   getAllUsers,
   getUserByEmail,
-} from '@/lib/packages/teachers/teacher.service';
-import { NextResponse } from 'next/server';
+} from "@/lib/packages/teachers/teacher.service";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   const users = await getAllUsers();
   if (!users) {
     return NextResponse.json(
       {
-        message: 'No user exists on the app, retry later',
+        message: "No user exists on the app, retry later",
         users: [],
       },
       { status: 400 },
@@ -24,7 +24,7 @@ export async function POST(request) {
   const body = await request.json();
   if (!body) {
     return NextResponse.json(
-      { message: 'A body is expected on the request but none has been found' },
+      { message: "A body is expected on the request but none has been found" },
       { status: 400 },
     );
   }
@@ -35,7 +35,7 @@ export async function POST(request) {
   if (missingFields.length > 0) {
     return NextResponse.json(
       {
-        message: 'Some fields are mandatory but they are missing',
+        message: "Some fields are mandatory but they are missing",
         missingFields,
       },
       { status: 400 },
@@ -46,8 +46,8 @@ export async function POST(request) {
   if (maybeUser) {
     return NextResponse.json(
       {
-        message: 'An account with the provided email already exists',
-        signInPath: '/api/v1/sign-in',
+        message: "An account with the provided email already exists",
+        signInPath: "/api/v1/sign-in",
       },
       { status: 400 },
     );
@@ -62,7 +62,7 @@ export async function POST(request) {
     email,
     phone,
     password,
-    role: 'USER',
+    role: "USER",
   };
 
   const newUser = await createNewUser(data);
@@ -71,7 +71,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         message:
-          'An unexpected error has occured, plese try creating the user later',
+          "An unexpected error has occured, plese try creating the user later",
       },
       { status: 500 },
     );

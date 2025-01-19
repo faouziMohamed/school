@@ -12,7 +12,7 @@ export async function GET(request, { params }) {
   if (!student) {
     return NextResponse.json(
       { message: "student et Id introuvable" },
-      { status: 404 }
+      { status: 404 },
     );
   }
   return NextResponse.json({ user: student });

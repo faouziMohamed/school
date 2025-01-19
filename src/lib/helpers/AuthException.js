@@ -7,6 +7,6 @@ export class AuthErrorException extends Error {
    */
   constructor({ message, status = 400, description } = {}) {
     super(JSON.stringify({ message, status, description }));
-    this.name = 'AuthErrorException';
+    this.name = "AuthErrorException";
   }
 }

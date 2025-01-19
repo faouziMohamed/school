@@ -12,7 +12,7 @@ export async function GET(request, { params }) {
   if (!course) {
     return NextResponse.json(
       { message: "This course does not exist" },
-      { status: 404 }
+      { status: 404 },
     );
   }
   return NextResponse.json(course);
