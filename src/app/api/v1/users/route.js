@@ -1,19 +1,20 @@
+import { findMissingField } from '@/lib/helpers/utils.server';
 import {
   createNewUser,
   getAllUsers,
   getUserByEmail,
-} from "@/lib/packages/teachers/teacher.service";
-import { NextResponse } from "next/server";
+} from '@/lib/packages/teachers/teacher.service';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   const users = await getAllUsers();
   if (!users) {
     return NextResponse.json(
       {
-        message: "No user exists on the app, retry later",
+        message: 'No user exists on the app, retry later',
         users: [],
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
   return NextResponse.json({ users });
@@ -23,38 +24,21 @@ export async function POST(request) {
   const body = await request.json();
   if (!body) {
     return NextResponse.json(
-      { message: "A body is expected on the request but none has been found" },
-      { status: 400 }
+      { message: 'A body is expected on the request but none has been found' },
+      { status: 400 },
     );
   }
 
   const { firstName, lastName, email, phone, password } = body;
-
-  const missingFields = [];
-  if (!firstName) {
-    missingFields.push("firstName");
-  }
-  if (!lastName) {
-    missingFields.push("lastName");
-  }
-  if (!email) {
-    missingFields.push("email");
-  }
-  if (!phone) {
-    missingFields.push("phone");
-  }
-
-  if (!password) {
-    missingFields.push("password");
-  }
+  const missingFields = findMissingField(body);
 
   if (missingFields.length > 0) {
     return NextResponse.json(
       {
-        message: "Some fields are mandatory but they are missing",
+        message: 'Some fields are mandatory but they are missing',
         missingFields,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -62,10 +46,10 @@ export async function POST(request) {
   if (maybeUser) {
     return NextResponse.json(
       {
-        message: "An account with the provided email already exists",
-        signInPath: "/api/v1/sign-in",
+        message: 'An account with the provided email already exists',
+        signInPath: '/api/v1/sign-in',
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
   console.log({ body });
@@ -78,7 +62,7 @@ export async function POST(request) {
     email,
     phone,
     password,
-    role: "USER",
+    role: 'USER',
   };
 
   const newUser = await createNewUser(data);
@@ -87,9 +71,9 @@ export async function POST(request) {
     return NextResponse.json(
       {
         message:
-          "An unexpected error has occured, plese try creating the user later",
+          'An unexpected error has occured, plese try creating the user later',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -98,6 +82,6 @@ export async function POST(request) {
       user: newUser,
       url: `/api/v1/users/${newUser.id}`,
     },
-    { status: 201 }
+    { status: 201 },
   );
 }

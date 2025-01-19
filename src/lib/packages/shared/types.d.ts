@@ -1,16 +1,32 @@
 import {
-  UserRole as Role,
   Classe as klass,
   Course as Kourse,
-  StudentAttendance as IStudentAttendance,
-  TeacherAttendance as ITeacherAttendance,
   CourseSchedule as ICourseSchedule,
-  StudentNotification as IStudentNotification,
-  UserNotification as IUserNotification,
-  User as IUser,
   Student as IStudent,
+  StudentAttendance as IStudentAttendance,
+  StudentNotification as IStudentNotification,
   StudentProfile as IStudentProfile,
-} from "@prisma/client";
+  TeacherAttendance as ITeacherAttendance,
+  User as IUser,
+  UserNotification as IUserNotification,
+  UserRole as Role,
+} from '@prisma/client';
+
+export type FrontUser = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  avatarUrl?: string;
+  email: string;
+  phone: string;
+  role: FrontUserRole;
+  profileId: number;
+  createdAt: string;
+};
+
+export type FrontUserWithToken = FrontUser & {
+  token: string;
+};
 
 export type AppUser = IUser;
 export type AppUserWithToken = AppUser & {
@@ -37,6 +53,42 @@ export type Course = Kourse & {
 
 export type StudentAttendance = IStudentAttendance;
 export type TeacherAttendance = ITeacherAttendance;
-export type CourseSchedule = ICourseSchedule & {
-  techerCourseSchedules: TeacherCourseSchedule[];
+
+type FrontUserRole = 'student' | 'teacher' | 'admin';
+type AuthAction = 'register' | 'login';
+
+declare module 'next-auth/jwt' {
+  // @ts-expect-error: the type `JWT` already declared (on next-auth module)
+  type JWT = FrontUserWithToken;
+}
+declare module 'next-auth' {
+  interface Session {
+    user: FrontUser;
+    role: FrontUserRole;
+  }
+}
+
+export type CreateUserInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phone: string;
+  role: Role;
+};
+
+export type LoginInput = {
+  email: string;
+  password: string;
+  role: Role;
+};
+
+export type CreateUserBody = Omit<CreateUserInput, 'role'> & {
+  role: FrontUserRole;
+  action: AuthAction;
+};
+
+export type LoginBody = Omit<LoginInput, 'role'> & {
+  role: FrontUserRole;
+  action: AuthAction;
 };

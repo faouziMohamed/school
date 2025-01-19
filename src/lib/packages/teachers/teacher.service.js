@@ -1,12 +1,13 @@
-import prisma from "@/lib/db/prisma.orm";
-import { USER_SELECT, PROFILE_SELECT } from "./teacher.constant";
+import { PROFILE_SELECT, USER_SELECT } from './teacher.constant';
+import prisma from '@/lib/db/prisma.orm';
+
 export async function getAllUsers() {
   try {
     return prisma.user.findMany({
       select: USER_SELECT,
     });
   } catch (error) {
-    console.log("error getting users", error.message);
+    console.log('error getting users', error.message);
     return null;
   }
 }
@@ -18,11 +19,11 @@ export async function getAllUsers() {
  * @param {string} userData.email
  * @param {string} userData.phone
  * @param {string} userData.password
- * @param {string} userData.role
+ * @param {UserRole} userData.role
  */
 export async function createNewUser(userData) {
   try {
-    const user = await prisma.user.create({
+    return await prisma.user.create({
       data: {
         email: userData.email,
         password: userData.password,
@@ -37,11 +38,8 @@ export async function createNewUser(userData) {
       },
       select: USER_SELECT,
     });
-
-    console.log("user", user);
-    return user;
   } catch (error) {
-    console.log("error?", error.message);
+    console.log('error?', error.message);
     return null;
   }
 }
@@ -53,7 +51,7 @@ export async function getUserById(userId) {
       select: USER_SELECT,
     });
   } catch (error) {
-    console.log("error getting user", error.message);
+    console.log('error getting user', error.message);
     return null;
   }
 }
@@ -72,7 +70,7 @@ export async function getUserByEmail(email) {
       },
     });
   } catch (error) {
-    console.log("error getting user", error.message);
+    console.log('error getting user', error.message);
     return null;
   }
 }
@@ -107,7 +105,7 @@ export async function updateUserById(userId, data) {
     profileData.phone = data.phone;
   }
   if (data.role) {
-    profileData.role = data.role || "USER";
+    profileData.role = data.role || 'USER';
   }
 
   if (data.email) {
@@ -143,7 +141,7 @@ export async function deleteUserById(userId) {
       select: USER_SELECT,
     });
   } catch (error) {
-    console.log("error deleting user", error.message);
+    console.log('error deleting user', error.message);
     return null;
   }
 }
