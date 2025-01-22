@@ -58,10 +58,11 @@ type FrontUserRole = 'student' | 'teacher' | 'admin';
 type AuthAction = 'register' | 'login';
 
 declare module 'next-auth/jwt' {
-  // @ts-expect-error: the type `JWT` already declared (on next-auth module)
+  // eslint-disable-next-line no-unused-vars
   type JWT = FrontUserWithToken;
 }
 declare module 'next-auth' {
+  // eslint-disable-next-line no-unused-vars
   interface Session {
     user: FrontUser;
     role: FrontUserRole;

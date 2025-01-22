@@ -1,5 +1,5 @@
-import prisma from "@/lib/db/prisma.orm";
-import { PROFILE_SELECT, STUDENT_SELECT } from "./student.constant";
+import { PROFILE_SELECT, STUDENT_SELECT } from './student.constant';
+import prisma from '@/lib/db/prisma.orm';
 
 export async function getAllStudents() {
   try {
@@ -7,7 +7,7 @@ export async function getAllStudents() {
       select: STUDENT_SELECT,
     });
   } catch (error) {
-    console.log("error getting users", error.message);
+    console.log('error getting users', error.message);
     return null;
   }
 }
@@ -38,10 +38,10 @@ export async function createNewStudent(studentData) {
       select: STUDENT_SELECT,
     });
 
-    console.log("user", newStudent);
+    console.log('user', newStudent);
     return newStudent;
   } catch (error) {
-    console.log("error?", error.message);
+    console.log('error?', error.message);
     return null;
   }
 }

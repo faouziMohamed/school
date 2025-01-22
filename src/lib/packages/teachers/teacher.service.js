@@ -1,5 +1,5 @@
-import { PROFILE_SELECT, USER_SELECT } from "./teacher.constant";
-import prisma from "@/lib/db/prisma.orm";
+import { PROFILE_SELECT, USER_SELECT } from './teacher.constant';
+import prisma from '@/lib/db/prisma.orm';
 
 export async function getAllUsers() {
   try {
@@ -7,7 +7,7 @@ export async function getAllUsers() {
       select: USER_SELECT,
     });
   } catch (error) {
-    console.log("error getting users", error.message);
+    console.log('error getting users', error.message);
     return null;
   }
 }
@@ -39,7 +39,7 @@ export async function createNewUser(userData) {
       select: USER_SELECT,
     });
   } catch (error) {
-    console.log("error?", error.message);
+    console.log('error?', error.message);
     return null;
   }
 }
@@ -51,7 +51,7 @@ export async function getUserById(userId) {
       select: USER_SELECT,
     });
   } catch (error) {
-    console.log("error getting user", error.message);
+    console.log('error getting user', error.message);
     return null;
   }
 }
@@ -70,7 +70,7 @@ export async function getUserByEmail(email) {
       },
     });
   } catch (error) {
-    console.log("error getting user", error.message);
+    console.log('error getting user', error.message);
     return null;
   }
 }
@@ -105,7 +105,7 @@ export async function updateUserById(userId, data) {
     profileData.phone = data.phone;
   }
   if (data.role) {
-    profileData.role = data.role || "USER";
+    profileData.role = data.role || 'USER';
   }
 
   if (data.email) {
@@ -141,7 +141,7 @@ export async function deleteUserById(userId) {
       select: USER_SELECT,
     });
   } catch (error) {
-    console.log("error deleting user", error.message);
+    console.log('error deleting user', error.message);
     return null;
   }
 }

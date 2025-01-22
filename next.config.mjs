@@ -2,7 +2,7 @@
 const nextConfig = {
   poweredByHeader: false,
   experimental: {
-    optimizePackageImports: ["@chakra-ui/react"],
+    optimizePackageImports: ['@chakra-ui/react'],
   },
 };
 

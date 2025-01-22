@@ -1,6 +1,6 @@
-import prisma from "@/lib/db/prisma.orm";
-import { COURSE_SELECT } from "./course.constant";
-import { USER_SELECT } from "../teachers/teacher.constant";
+import { USER_SELECT } from '../teachers/teacher.constant';
+import { COURSE_SELECT } from './course.constant';
+import prisma from '@/lib/db/prisma.orm';
 
 /**
  * @param {Object} data
@@ -10,7 +10,7 @@ import { USER_SELECT } from "../teachers/teacher.constant";
  * @param {number} data.classId
  */
 export async function createNewCourse(data) {
-  const { name, classId, teacherId, description = "" } = data;
+  const { name, classId, teacherId, description = '' } = data;
   try {
     return prisma.course.create({
       data: {
@@ -36,7 +36,7 @@ export async function createNewCourse(data) {
       },
     });
   } catch (error) {
-    console.log("creation error", error);
+    console.log('creation error', error);
     return null;
   }
 }
@@ -132,6 +132,7 @@ export async function updateCourseById(courseId, data) {
     select: COURSE_SELECT,
   });
 }
+
 /**
  * @param {number} courseId
  * @param {number} classId

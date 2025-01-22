@@ -1,4 +1,4 @@
-import { PROFILE_SELECT, USER_SELECT } from "../teachers/teacher.constant";
+import { PROFILE_SELECT, USER_SELECT } from '../teachers/teacher.constant';
 
 export const COURSE_SELECT = {
   id: true,

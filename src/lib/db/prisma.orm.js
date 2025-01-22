@@ -1,4 +1,6 @@
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// noinspection JSUnresolvedReference
+const prisma = global.prismaClient || new PrismaClient();
+if (process.env.NODE_ENV === 'development') global.prismaClient = prisma;
 export default prisma;

@@ -2,15 +2,15 @@ import {
   createNewStudent,
   getAllStudents,
   isStudentExistByEmail,
-} from "@/lib/packages/students/students.service";
-import { NextResponse } from "next/server";
+} from '@/lib/packages/students/students.service';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   const students = await getAllStudents();
   if (!students) {
     return NextResponse.json(
       {
-        message: "No user exists on the app, retry later",
+        message: 'No user exists on the app, retry later',
         students: [],
       },
       { status: 400 },
@@ -23,7 +23,7 @@ export async function POST(request) {
   const body = await request.json();
   if (!body) {
     return NextResponse.json(
-      { message: "A body is expected on the request but none has been found" },
+      { message: 'A body is expected on the request but none has been found' },
       { status: 400 },
     );
   }
@@ -32,26 +32,26 @@ export async function POST(request) {
 
   const missingFields = [];
   if (!firstName) {
-    missingFields.push("firstName");
+    missingFields.push('firstName');
   }
   if (!lastName) {
-    missingFields.push("lastName");
+    missingFields.push('lastName');
   }
   if (!email) {
-    missingFields.push("email");
+    missingFields.push('email');
   }
   if (!phone) {
-    missingFields.push("phone");
+    missingFields.push('phone');
   }
 
   if (!password) {
-    missingFields.push("password");
+    missingFields.push('password');
   }
 
   if (missingFields.length > 0) {
     return NextResponse.json(
       {
-        message: "Some fields are mandatory but they are missing",
+        message: 'Some fields are mandatory but they are missing',
         missingFields,
       },
       { status: 400 },
@@ -62,8 +62,8 @@ export async function POST(request) {
   if (studentExists) {
     return NextResponse.json(
       {
-        message: "An account with the provided email already exists",
-        signInPath: "/api/v1/sign-in",
+        message: 'An account with the provided email already exists',
+        signInPath: '/api/v1/sign-in',
       },
       { status: 400 },
     );
@@ -84,7 +84,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         message:
-          "An unexpected error has occured, plese try creating the student later",
+          'An unexpected error has occured, plese try creating the student later',
       },
       { status: 500 },
     );
