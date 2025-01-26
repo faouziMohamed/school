@@ -15,6 +15,7 @@ export function LeftSideBar() {
   const { data: session } = useSession();
   const user = session?.user;
   useEffect(() => {
+    console.log('pathname', pathname);
     const activePath = navBarItems.find((item) =>
       item.href.startsWith(pathname),
     );

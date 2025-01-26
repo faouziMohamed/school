@@ -2,21 +2,20 @@ import {
   createNewStudent,
   getAllStudents,
   isStudentExistByEmail,
+  searchStudentsByNames,
 } from '@/lib/packages/students/students.service';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
-  const students = await getAllStudents();
-  if (!students) {
-    return NextResponse.json(
-      {
-        message: 'No user exists on the app, retry later',
-        students: [],
-      },
-      { status: 400 },
-    );
-  }
-  return NextResponse.json({ students });
+/**
+ * @param {import('next/server').NextRequest} request
+ */
+export async function GET(request) {
+  const search = request.nextUrl.searchParams.get('search');
+  const students = search
+    ? await searchStudentsByNames(search)
+    : await getAllStudents();
+
+  return NextResponse.json({ data: students });
 }
 
 export async function POST(request) {
@@ -68,7 +67,6 @@ export async function POST(request) {
       { status: 400 },
     );
   }
-  console.log({ body });
 
   const data = {
     firstName,

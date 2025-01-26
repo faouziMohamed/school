@@ -1,4 +1,3 @@
-import { USER_SELECT } from '../teachers/teacher.constant';
 import { COURSE_SELECT } from './course.constant';
 import prisma from '@/lib/db/prisma.orm';
 
@@ -6,33 +5,29 @@ import prisma from '@/lib/db/prisma.orm';
  * @param {Object} data
  * @param {string} data.name
  * @param {string} data.description
- * @param {number} data.teacherId
- * @param {number} data.classId
  */
 export async function createNewCourse(data) {
-  const { name, classId, teacherId, description = '' } = data;
+  const { name, description = '' } = data;
   try {
     return prisma.course.create({
       data: {
         name,
-        classId: Number(classId),
-        teacherId: Number(teacherId),
         description,
       },
       select: {
         id: true,
         name: true,
         description: true,
-        classe: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-          },
-        },
-        teacher: {
-          select: USER_SELECT,
-        },
+        // classe: {
+        //   select: {
+        //     id: true,
+        //     name: true,
+        //     description: true,
+        //   },
+        // },
+        // teacher: {
+        //   select: USER_SELECT,
+        // },
       },
     });
   } catch (error) {

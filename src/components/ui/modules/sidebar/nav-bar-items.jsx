@@ -55,11 +55,11 @@ export const navBarItems = [
   },
   {
     id: genId(),
-    name: 'Courses Schedule',
-    href: '/courses-schedule',
-    permissions: ['student', 'teacher', 'admin'],
-    Icon: <GrSchedule />,
-    description: 'View the schedule of all courses and classes',
+    name: 'Course Catalog',
+    href: '/course-catalog',
+    permissions: ['teacher'],
+    Icon: <PiReadCvLogoDuotone />,
+    description: 'List of all available courses to join',
   },
   {
     id: genId(),
@@ -68,6 +68,14 @@ export const navBarItems = [
     permissions: ['student', 'teacher', 'admin'],
     Icon: <PiReadCvLogoDuotone />,
     description: 'List of all available courses to join',
+  },
+  {
+    id: genId(),
+    name: 'Courses Schedule',
+    href: '/courses-schedule',
+    permissions: ['student', 'teacher', 'admin'],
+    Icon: <GrSchedule />,
+    description: 'View the schedule of all courses and classes',
   },
   {
     id: genId(),

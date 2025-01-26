@@ -42,7 +42,7 @@ export function LoginForm({ redirectTo }) {
       </Stack>
       <Field
         label='Email'
-        invalid={!!errors.email?.message}
+        invalid={!!errors.email}
         errorText={errors.email?.message}
         required
       >
@@ -60,7 +60,7 @@ export function LoginForm({ redirectTo }) {
       </Field>
       <Field
         label='Password'
-        invalid={!!errors.password?.message}
+        invalid={!!errors.password}
         errorText={errors.password?.message}
         required
       >
@@ -74,7 +74,7 @@ export function LoginForm({ redirectTo }) {
       </Field>
       <Button
         type='submit'
-        isLoading={isSubmitting}
+        loading={isSubmitting}
         disabled={!canSubmit || isSubmitting}
       >
         Login

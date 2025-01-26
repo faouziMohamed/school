@@ -28,6 +28,7 @@ model Student {
   studentAttendances StudentAttendance[]
   notifications      StudentNotification[]
   profile            StudentProfile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  classStudents      ClassStudent[]
 
   @@map("students")
 }
@@ -51,40 +52,75 @@ model User {
   profileId           Int                 @map("profile_id")
   email               String              @unique
   password            String
-  courses             Course[]
+  profile             UserProfile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
   teachingAttendances TeacherAttendance[]
   notifications       UserNotification[]
-  profile             UserProfile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  classTeachers       ClassTeacher[]
 
   @@map("teachers")
 }
 
 model Classe {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?  @db.Text
-  courses     Course[]
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  slug         String         @unique
+  description  String?        @db.Text
+  classTeacher ClassTeacher[]
+  classCourse  ClassCourse[]
+  classStudent ClassStudent[]
 
+  @@index([name, slug])
   @@map("classes")
 }
 
-model Course {
-  id          Int              @id @default(autoincrement())
-  name        String
-  description String?          @db.Text
-  teacherId   Int              @map("teacher_id")
-  classId     Int              @map("class_id")
-  teacher     User             @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  classe      Classe           @relation(fields: [classId], references: [id], onDelete: Cascade)
-  schedules   CourseSchedule[]
+model ClassTeacher {
+  id        Int    @id @default(autoincrement())
+  teacherId Int    @map("teacher_id")
+  classId   Int    @map("class_id")
+  teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  classe    Classe @relation(fields: [classId], references: [id], onDelete: Cascade)
 
+  @@unique([teacherId, classId])
+  @@map("class_teachers")
+}
+
+model ClassStudent {
+  id        Int     @id @default(autoincrement())
+  studentId Int     @map("student_id")
+  classId   Int     @map("class_id")
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classe    Classe  @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, classId])
+  @@map("class_students")
+}
+
+model Course {
+  id          Int           @id @default(autoincrement())
+  name        String
+  slug        String        @unique
+  description String?       @db.Text
+  classCourse ClassCourse[]
+
+  @@index([slug])
   @@map("courses")
+}
+
+model ClassCourse {
+  id             Int              @id @default(autoincrement())
+  courseId       Int              @map("course_id")
+  classId        Int              @map("class_id")
+  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  classe         Classe           @relation(fields: [classId], references: [id], onDelete: Cascade)
+  courseSchedule CourseSchedule[]
+
+  @@map("class_courses")
 }
 
 model CourseSchedule {
   id                 Int                 @id @default(autoincrement())
-  courseId           Int                 @map("course_id")
-  course             Course              @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  classCourseId      Int                 @map("class_course_id")
+  classCourse        ClassCourse         @relation(fields: [classCourseId], references: [id], onDelete: Cascade)
   startAt            DateTime
   endAt              DateTime
   note               String?             @default("")

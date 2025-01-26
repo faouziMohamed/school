@@ -3,21 +3,17 @@ import {
   createNewUser,
   getAllUsers,
   getUserByEmail,
+  searchTeachersByNames,
 } from '@/lib/packages/teachers/teacher.service';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
-  const users = await getAllUsers();
-  if (!users) {
-    return NextResponse.json(
-      {
-        message: 'No user exists on the app, retry later',
-        users: [],
-      },
-      { status: 400 },
-    );
-  }
-  return NextResponse.json({ users });
+export async function GET(request) {
+  const search = request.nextUrl.searchParams.get('search');
+  const teachers = search
+    ? await searchTeachersByNames(search)
+    : await getAllUsers();
+
+  return NextResponse.json({ data: teachers });
 }
 
 export async function POST(request) {
@@ -54,7 +50,7 @@ export async function POST(request) {
   }
   console.log({ body });
   /**
-   * @type {import("@prisma/client").User & import("@prisma/client").UserProfile}
+   * @type {import('@prisma/client').User & import('@prisma/client').UserProfile}
    * */
   const data = {
     firstName,

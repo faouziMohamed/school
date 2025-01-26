@@ -1,16 +1,16 @@
-import { AllClassListed } from '@/app/(dash)/class-rooms/all-class-listed';
-import { NotAllowedToVisualize } from '@/app/(dash)/class-rooms/not-allowed-to-visualize';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
-import { Button } from '@/components/ui/button';
+import { ClassListCard } from '@/components/ui/classes/class-list-card';
+import { NotAllowedToVisualize } from '@/components/ui/classes/not-allowed-to-visualize';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getAllClasses } from '@/lib/packages/classes/classes.service';
 import { Card, Heading, Show, Stack } from '@chakra-ui/react';
 import { getServerSession } from 'next-auth';
-import { MdAdd } from 'react-icons/md';
 
-export default async function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function ClassRoomsPage() {
   /**
-   * @type {import("next-auth").Session}
+   * @type {import('next-auth').Session}
    */
   const session = await getServerSession(authOptions);
   const user = session.user;
@@ -44,21 +44,7 @@ export default async function Home() {
         />
       </Show>
       <Show when={classes.length}>
-        <Card.Root w='100%'>
-          <Card.Header
-            justifyContent='space-between'
-            flexDirection={{ sm: 'row' }}
-          >
-            <Heading size='md'>Class Rooms</Heading>
-            <Button>
-              <MdAdd />
-              New Class
-            </Button>
-          </Card.Header>
-          <Card.Body color='fg.muted'>
-            <AllClassListed classes={classes} />
-          </Card.Body>
-        </Card.Root>
+        <ClassListCard classes={classes} />
       </Show>
     </Stack>
   );

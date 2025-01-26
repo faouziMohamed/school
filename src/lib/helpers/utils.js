@@ -26,11 +26,10 @@ export function formatDateRelative(date) {
 }
 
 export function generateSlug(title) {
-  const formattedDate = dayjs().format('YYYYMMDDss');
-  return `${slugify(title, {
+  return slugify(title, {
     lower: true,
     locale: 'fr',
-  })}_${formattedDate}`;
+  });
 }
 
 export function getPasswordScore(password) {

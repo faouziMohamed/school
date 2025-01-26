@@ -1,14 +1,16 @@
 import { PROFILE_SELECT, STUDENT_SELECT } from './student.constant';
 import prisma from '@/lib/db/prisma.orm';
+import { getStudentWithClasses } from '@/lib/helpers/utils.server';
 
 export async function getAllStudents() {
   try {
-    return prisma.student.findMany({
+    const users = await prisma.student.findMany({
       select: STUDENT_SELECT,
     });
+    return users.map(getStudentWithClasses);
   } catch (error) {
     console.log('error getting users', error.message);
-    return null;
+    return [];
   }
 }
 
@@ -57,14 +59,14 @@ export async function isStudentExistByEmail(email) {
 }
 
 export async function getStudentById(studentId) {
-  return await prisma.student.findFirst({
+  return prisma.student.findFirst({
     where: { id: Number(studentId) },
     select: STUDENT_SELECT,
   });
 }
 
 export async function getStudentByEmail(email) {
-  return await prisma.student.findFirst({
+  return prisma.student.findFirst({
     where: {
       email: String(email).toLowerCase(),
     },
@@ -91,12 +93,12 @@ export async function getStudentByEmail(email) {
  */
 export async function updateUserById(studentId, data) {
   /**
-   * @type {import("../shared/types").StudentProfile}
+   * @type {import('../shared/types').StudentProfile}
    * */
   const profileData = {};
 
   /**
-   * @type {import("../shared/types").Student}
+   * @type {import('../shared/types').Student}
    * */
   const studentData = {};
   if (data.firstName) {
@@ -136,4 +138,37 @@ export async function deleteUserById(userId) {
   return prisma.student.delete({
     where: { id: Number(userId) },
   });
+}
+
+/**
+ * @param {string} search
+ */
+export async function searchStudentsByNames(search) {
+  try {
+    const users = await prisma.student.findMany({
+      where: {
+        OR: [
+          { email: { contains: search } },
+          {
+            profile: {
+              OR: [
+                { firstName: { contains: search } },
+                { lastName: { contains: search } },
+              ],
+            },
+          },
+        ],
+      },
+      orderBy: [
+        { profile: { firstName: 'asc' } },
+        { profile: { lastName: 'asc' } },
+        { email: 'asc' },
+      ],
+      select: STUDENT_SELECT,
+    });
+    return users.map(getStudentWithClasses);
+  } catch (error) {
+    console.log('error getting users', error.message);
+    return [];
+  }
 }

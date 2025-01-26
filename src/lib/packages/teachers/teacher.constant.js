@@ -11,4 +11,21 @@ export const USER_SELECT = {
   id: true,
   email: true,
   profile: { select: PROFILE_SELECT },
+  classTeachers: {
+    select: {
+      classe: {
+        select: {
+          name: true,
+          slug: true,
+          description: true,
+        },
+      },
+    },
+  },
+};
+
+export const CLASS_TEACHERS_SELECT = {
+  id: true,
+  email: true,
+  profile: { select: PROFILE_SELECT },
 };

@@ -63,7 +63,7 @@ export function findMissingField({
  * @param {FrontUserRole} role
  * @returns {FrontUser}
  */
-export function adaptUserFromDb(newUser, role) {
+export function adaptUserFromDb(newUser, role = 'student') {
   return {
     id: newUser.id,
     profileId: newUser.profile.id,
@@ -96,4 +96,26 @@ export function discoverFrontUserRole(role, dbUserRole) {
   } else {
     return role;
   }
+}
+
+export function getStudentWithClasses(user) {
+  return {
+    ...adaptUserFromDb(user, 'student'),
+    classes: user.classStudents.map((classStudent) => ({
+      name: classStudent.classe.name,
+      description: classStudent.classe.description,
+      slug: classStudent.classe.slug,
+    })),
+  };
+}
+
+export function getTeacherWithClasses(user) {
+  return {
+    ...adaptUserFromDb(user, 'teacher'),
+    classes: user.classTeachers.map((classTeacher) => ({
+      name: classTeacher.classe.name,
+      description: classTeacher.classe.description,
+      slug: classTeacher.classe.slug,
+    })),
+  };
 }

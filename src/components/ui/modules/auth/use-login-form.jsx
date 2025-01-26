@@ -18,8 +18,14 @@ export const requiredFielConfig = {
  */
 export function useLoginForm({ redirectTo }) {
   /**
-   * @type {import("react-hook-form").UseFormReturn<LoginInput>}
+   * @type {import('react-hook-form').UseFormReturn<LoginInput>}
    */
+  const form = useForm({
+    defaultValues,
+    mode: 'all',
+    shouldFocusError: true,
+    criteriaMode: 'all',
+  });
   const {
     handleSubmit,
     register,
@@ -27,12 +33,7 @@ export function useLoginForm({ redirectTo }) {
     watch,
     reset,
     setError,
-  } = useForm({
-    defaultValues,
-    mode: 'all',
-    shouldFocusError: true,
-    criteriaMode: 'all',
-  });
+  } = form;
   const [selected, setSelected] = useState('student');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();

@@ -22,6 +22,13 @@ export type FrontUser = {
   role: FrontUserRole;
   profileId: number;
   createdAt: string;
+  classes: FrontUserClass[];
+};
+
+type FrontUserClass = {
+  name: string;
+  description: string;
+  slug: string;
 };
 
 export type FrontUserWithToken = FrontUser & {
@@ -41,8 +48,7 @@ export type StudentNotification = IStudentNotification;
 export type UserNotification = IUserNotification;
 
 export type Classe = klass & {
-  courses: Kourse[];
-  studentAttendances: IStudentAttendance[];
+  _count: { classTeacher: number; classCourse: number; classStudent: number };
 };
 
 export type Course = Kourse & {
@@ -89,7 +95,14 @@ export type CreateUserBody = Omit<CreateUserInput, 'role'> & {
   action: AuthAction;
 };
 
+export type CreateStudentBody = Omit<CreateUserInput, 'role'>;
+
 export type LoginBody = Omit<LoginInput, 'role'> & {
   role: FrontUserRole;
   action: AuthAction;
+};
+
+export type CreateNewClassInput = {
+  name: string;
+  description: string;
 };

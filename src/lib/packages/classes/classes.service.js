@@ -14,45 +14,34 @@ export async function createNewClass(data) {
   }
 
   return prisma.classe.create({
-    data: {
-      name,
-      description,
-    },
-    select: {
-      id: true,
-      name: true,
-      description: true,
-    },
+    data: { name, description },
+    select: CLASSE_SELECT,
   });
 }
 
 export async function getClassById(classId) {
   return prisma.classe.findUnique({
-    where: {
-      id: Number(classId),
-    },
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      courses: {
-        select: {
-          id: true,
-          name: true,
-          description: true,
-        },
-      },
-    },
+    where: { id: Number(classId) },
+    select: CLASSE_SELECT,
+  });
+}
+
+export async function getClassBySlug(slug) {
+  return prisma.classe.findUnique({
+    where: { slug },
+    select: CLASSE_SELECT,
+  });
+}
+
+export async function getClassByName(name) {
+  return prisma.classe.findUnique({
+    where: { name },
+    select: CLASSE_SELECT,
   });
 }
 
 export async function deleteClassById(classId) {
-  return prisma.classe.delete({
-    where: {
-      id: Number(classId),
-    },
-    select: CLASSE_SELECT,
-  });
+  return prisma.classe.delete({ where: { id: Number(classId) } });
 }
 
 export async function getAllClasses() {

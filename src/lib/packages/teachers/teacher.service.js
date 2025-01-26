@@ -1,14 +1,16 @@
 import { PROFILE_SELECT, USER_SELECT } from './teacher.constant';
 import prisma from '@/lib/db/prisma.orm';
+import { getTeacherWithClasses } from '@/lib/helpers/utils.server';
 
 export async function getAllUsers() {
   try {
-    return prisma.user.findMany({
+    const users = await prisma.user.findMany({
       select: USER_SELECT,
     });
+    return users.map(getTeacherWithClasses);
   } catch (error) {
     console.log('error getting users', error.message);
-    return null;
+    return [];
   }
 }
 
@@ -75,6 +77,11 @@ export async function getUserByEmail(email) {
   }
 }
 
+export async function isUserExistByEmail(email) {
+  const user = await getUserByEmail(email);
+  return !!user;
+}
+
 /**
  * @param {number} userId
  * @param {Object} data
@@ -87,12 +94,12 @@ export async function getUserByEmail(email) {
  */
 export async function updateUserById(userId, data) {
   /**
-   * @type {import("@prisma/client").UserProfile}
+   * @type {import('@prisma/client').UserProfile}
    * */
   const profileData = {};
 
   /**
-   * @type {import("@prisma/client").User}
+   * @type {import('@prisma/client').User}
    * */
   const userData = {};
   if (data.firstName) {
@@ -143,5 +150,38 @@ export async function deleteUserById(userId) {
   } catch (error) {
     console.log('error deleting user', error.message);
     return null;
+  }
+}
+
+/**
+ * @param {string} search
+ */
+export async function searchTeachersByNames(search) {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { email: { contains: search } },
+          {
+            profile: {
+              OR: [
+                { firstName: { contains: search } },
+                { lastName: { contains: search } },
+              ],
+            },
+          },
+        ],
+      },
+      orderBy: [
+        { profile: { firstName: 'asc' } },
+        { profile: { lastName: 'asc' } },
+        { email: 'asc' },
+      ],
+      select: USER_SELECT,
+    });
+    return users.map(getTeacherWithClasses);
+  } catch (error) {
+    console.log('error getting users', error.message);
+    return [];
   }
 }

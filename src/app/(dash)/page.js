@@ -11,10 +11,12 @@ import {
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const currentDate = new Date();
   /**
-   * @type {import("next-auth").Session}
+   * @type {import('next-auth').Session}
    */
   const session = await getServerSession(authOptions);
   const user = session.user;
