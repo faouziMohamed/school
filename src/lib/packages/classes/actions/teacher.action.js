@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/db/prisma.orm';
 import { capitalizeWords } from '@/lib/helpers/utils';
-import { findMissingField, hashPassword } from '@/lib/helpers/utils.server';
+import { findUserMissingField, hashPassword } from '@/lib/helpers/utils.server';
 import { getClassById } from '@/lib/packages/classes/classes.service';
 import { isUserExistByEmail } from '@/lib/packages/teachers/teacher.service';
 import { ROUTES } from '@/lib/routes/client.route';
@@ -21,7 +21,7 @@ export async function submitCreateNewTeacherForGivenClass(previous, formData) {
      * @type {CreateUserInput&{classId: number; slug: string}}
      */
     const data = Object.fromEntries(formData);
-    const missingFields = findMissingField(data);
+    const missingFields = findUserMissingField(data);
 
     if (missingFields.length > 0) {
       return {

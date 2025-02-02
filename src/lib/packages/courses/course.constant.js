@@ -1,14 +1,50 @@
-import { PROFILE_SELECT, USER_SELECT } from '../teachers/teacher.constant';
-
 export const COURSE_SELECT = {
   id: true,
   name: true,
   description: true,
-  teacher: {
+  slug: true,
+  classCourses: {
     select: {
-      ...USER_SELECT,
-      profile: { select: { ...PROFILE_SELECT, role: false } },
+      id: true,
+      classId: true,
+      classe: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
     },
   },
-  classe: true,
+};
+
+export const CLASS_COURSE_SELECT = {
+  id: true,
+  name: true,
+  description: true,
+  slug: true,
+  classCourses: {
+    select: {
+      id: true,
+      classId: true,
+    },
+  },
+};
+
+export const COURSE_SEARCH_SELECT = {
+  id: true,
+  name: true,
+  description: true,
+  slug: true,
+  classCourses: {
+    select: {
+      id: true,
+      classId: true,
+      classe: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  },
 };

@@ -1,4 +1,4 @@
-import { findMissingField } from '@/lib/helpers/utils.server';
+import { findUserMissingField } from '@/lib/helpers/utils.server';
 import {
   createNewUser,
   getAllUsers,
@@ -26,7 +26,7 @@ export async function POST(request) {
   }
 
   const { firstName, lastName, email, phone, password } = body;
-  const missingFields = findMissingField(body);
+  const missingFields = findUserMissingField(body);
 
   if (missingFields.length > 0) {
     return NextResponse.json(
@@ -48,7 +48,6 @@ export async function POST(request) {
       { status: 400 },
     );
   }
-  console.log({ body });
   /**
    * @type {import('@prisma/client').User & import('@prisma/client').UserProfile}
    * */
@@ -62,7 +61,6 @@ export async function POST(request) {
   };
 
   const newUser = await createNewUser(data);
-  console.log({ newUser });
   if (!newUser) {
     return NextResponse.json(
       {

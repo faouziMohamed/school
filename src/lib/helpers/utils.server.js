@@ -30,7 +30,7 @@ export async function verifyPassword(password, hashedPassword) {
  * @param {string} user.password - The user's password
  * @returns {string[]} - An array of missing fields
  */
-export function findMissingField({
+export function findUserMissingField({
   firstName,
   lastName,
   email,
@@ -53,6 +53,24 @@ export function findMissingField({
 
   if (!password) {
     missingFields.push('password');
+  }
+  return missingFields;
+}
+
+/**
+ * Find missing fields in a user object
+ * @param {Object} course - The user object
+ * @param {string} course.name - The course's name
+ * @param {string} course.description - The course's description
+ * @returns {string[]} - An array of missing fields
+ */
+export function findCourseMissingField({ name, description } = {}) {
+  const missingFields = [];
+  if (!name) {
+    missingFields.push('name');
+  }
+  if (!description) {
+    missingFields.push('description');
   }
   return missingFields;
 }

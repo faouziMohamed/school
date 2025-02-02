@@ -20,4 +20,12 @@ export const API_ROUTES = {
     const query = new URLSearchParams({ search: sTerm });
     return `${BASE_API}/users?${query.toString()}`;
   },
+  COURSES: (search) => {
+    if (!search?.trim()) {
+      return `${BASE_API}/courses`;
+    }
+    const sTerm = String(search).trim() || '';
+    const query = new URLSearchParams({ search: sTerm });
+    return `${BASE_API}/courses?${query.toString()}`;
+  },
 };

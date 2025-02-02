@@ -1,6 +1,7 @@
 'use client';
-import { useAddUserToClass } from '@/components/ui/classes/use-add-user-to-class';
+import { useAddUserToClass } from '@/components/ui/classes/users/use-add-user-to-class';
 import { Field, Input } from '@/components/ui/field';
+import { InputGroup } from '@/components/ui/input-group';
 import {
   PopoverBody,
   PopoverContent,
@@ -17,9 +18,11 @@ import {
   Icon,
   List,
   Show,
+  Spinner,
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { LuUser } from 'react-icons/lu';
 import { SiGoogleclassroom } from 'react-icons/si';
 
 /**
@@ -32,23 +35,23 @@ import { SiGoogleclassroom } from 'react-icons/si';
 export function SelectUser({ onClose, klass, role }) {
   const hook = useAddUserToClass(onClose, klass, role);
   const { open, setOpen, ref, handleSearch, users, onAddUserToClass } = hook;
-  const { selectedUser, setSelectedUser, submitting } = hook;
+  const { selectedUser, setSelectedUser, submitting, fetchingUsers } = hook;
   return (
     <Stack>
       <Show when={!!selectedUser}>
         <Flex shadow='md' bgColor='blue.50' px='1rem' py='0.5rem'>
           <SelectedUser selectedUser={selectedUser} />
-          <Button
-            flexBasis='30%'
-            flexShrink={0}
-            colorPalette='blue'
-            onClick={onAddUserToClass}
-            spinnerPlacement='end'
-            loadingText='Adding to class...'
-            disabled={submitting}
-          >
-            Add to class
-          </Button>
+          <Box flexBasis='30%' flexShrink={0}>
+            <Button
+              colorPalette='blue'
+              onClick={onAddUserToClass}
+              spinnerPlacement='end'
+              loadingText='Adding to class...'
+              disabled={submitting}
+            >
+              Add to class
+            </Button>
+          </Box>
         </Flex>
       </Show>
       <Heading size='sm'></Heading>
@@ -60,12 +63,16 @@ export function SelectUser({ onClose, klass, role }) {
       >
         <PopoverTrigger asChild>
           <Field label={`Search for a ${role}`}>
-            <Input
-              ref={ref}
-              onChange={async (e) => {
-                await handleSearch(e.target.value);
-              }}
-            />
+            <InputGroup
+              endElement={fetchingUsers ? <Spinner /> : <LuUser />}
+              w='100%'
+            >
+              <Input
+                ref={ref}
+                autocomplete='off'
+                onChange={async (e) => handleSearch(e.target.value)}
+              />
+            </InputGroup>
           </Field>
         </PopoverTrigger>
         <PopoverContent>

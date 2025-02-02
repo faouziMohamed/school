@@ -1,4 +1,4 @@
-import { COURSE_SELECT } from './course.constant';
+import { COURSE_SEARCH_SELECT, COURSE_SELECT } from './course.constant';
 import prisma from '@/lib/db/prisma.orm';
 
 /**
@@ -37,6 +37,16 @@ export async function createNewCourse(data) {
 }
 
 /**
+ * @param {string} slug
+ */
+export async function findCourseBySlug(slug) {
+  return prisma.course.findFirst({
+    where: { slug },
+    select: COURSE_SELECT,
+  });
+}
+
+/**
  * @param {number} courseId
  */
 export async function getCourseById(courseId) {
@@ -52,6 +62,23 @@ export async function getAllCourses() {
   return prisma.course.findMany({
     select: COURSE_SELECT,
   });
+}
+
+/**
+ * @param {string} name
+ */
+export async function searchStudentsByName(name) {
+  try {
+    return prisma.course.findMany({
+      where: {
+        OR: [{ name: { contains: name } }, { slug: { contains: name } }],
+      },
+      select: COURSE_SEARCH_SELECT,
+    });
+  } catch (error) {
+    console.log('Search course error', error);
+    return [];
+  }
 }
 
 /**
@@ -92,11 +119,11 @@ export async function deleteCourseById(courseId) {
 
 /**
  *
+ * @param {number} courseId
  * @param {Object} data
- * @param {string?} data.name
- * @param {string?} data.description
- * @param {number?} data.teacherId
- * @param {number?} data.classId
+ * @param {string} data.name
+ * @param {string} data.description
+ *
  */
 export async function updateCourseById(courseId, data) {
   const { name, description, teacherId, classId } = data;
@@ -129,7 +156,7 @@ export async function updateCourseById(courseId, data) {
 }
 
 /**
- * @param {number} courseId
+ * @param {number} teacherId
  * @param {number} classId
  */
 export async function getCourseByClassAndTeacherId(classId, teacherId) {

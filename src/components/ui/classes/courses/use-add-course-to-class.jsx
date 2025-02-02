@@ -1,7 +1,5 @@
 import { toaster } from '@/components/ui/toaster';
-import { capitalize } from '@/lib/helpers/utils';
-import { submitAddUserToClass } from '@/lib/packages/classes/actions/students.action';
-import { submitAddTeacherToClass } from '@/lib/packages/classes/actions/teacher.action';
+import { submitAddCourseToClass } from '@/lib/packages/classes/actions/courses.action';
 import { API_ROUTES } from '@/lib/routes/server.route';
 import { useRef, useState } from 'react';
 
@@ -10,12 +8,16 @@ let controller = new AbortController();
 /**
  * @param {() => void} onClose
  * @param {Classe} klass
- * @param {FrontUserRole} role
  */
-export function useAddUserToClass(onClose, klass, role) {
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+export function useAddCourseToClass(onClose, klass) {
+  /**
+   * @type {[Course[], (courses: Course[]) => void]}
+   */
+  const state = useState([]);
+  const [courses, setCourses] = state;
+  const [selectedCourse, setSelectedCourse] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [fetchingCourses, setFetchingCourses] = useState(false);
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const handleSearch = async (search) => {
@@ -24,58 +26,53 @@ export function useAddUserToClass(onClose, klass, role) {
     }
     if (!search) {
       setOpen(false);
-      setUsers([]);
+      setCourses([]);
       return;
     }
     controller = new AbortController();
     try {
-      const searchUrl =
-        role === 'student'
-          ? API_ROUTES.STUDENTS(search)
-          : API_ROUTES.USERS(search);
-
+      const searchUrl = API_ROUTES.COURSES(search);
+      setFetchingCourses(true);
       const response = await fetch(searchUrl, { signal: controller.signal });
+      setFetchingCourses(false);
       if (!response.ok) {
-        setUsers([]);
+        setCourses([]);
         setOpen(false);
         return;
       }
       /**
-       * @type {{data: FrontUser[]}}
+       * @type {{data: Course[]}}
        */
       const data = await response.json();
       if (data.data.length === 0) {
-        setUsers([]);
+        setCourses([]);
         setOpen(false);
         return;
       }
-      setUsers(data.data.sort((a, b) => a.classes.length - b.classes.length));
+      setCourses(data.data.sort((a, b) => a.classes.length - b.classes.length));
       setOpen(true);
     } catch (e) {
       console.error(e);
+      setFetchingCourses(false);
     }
   };
 
-  const onAddUserToClass = async () => {
+  const onAddCourseToClass = async () => {
     setSubmitting(true);
-    const action =
-      role === 'student' ? submitAddUserToClass : submitAddTeacherToClass;
-    const response = await action({
+    const response = await submitAddCourseToClass({
       classId: klass.id,
-      ...(role === 'student'
-        ? { studentId: selectedUser.id }
-        : { teacherId: selectedUser.id }),
+      courseId: selectedCourse.id,
       classSlug: klass.slug,
     });
     setSubmitting(false);
     if (response.success) {
       toaster.success({
-        title: `${capitalize(role)} added to class successfully`,
+        title: `Course added to the class successfully`,
       });
       onClose?.();
     } else if (response.error) {
       toaster.error({
-        title: `Failed to add ${role} to class`,
+        title: `Failed to add the course to the class`,
         description: response.error,
         type: 'error',
       });
@@ -83,15 +80,16 @@ export function useAddUserToClass(onClose, klass, role) {
   };
 
   return {
-    users,
-    selectedUser,
-    setSelectedUser,
+    courses,
+    selectedCourse,
+    setSelectedCourse,
     submitting,
     setSubmitting,
     open,
     setOpen,
     ref,
     handleSearch,
-    onAddUserToClass,
+    onAddCourseToClass,
+    fetchingCourses,
   };
 }

@@ -54,7 +54,6 @@ export function useLoginForm({ redirectTo }) {
         ...submitData,
         redirect: false,
       });
-      console.log(response);
       if (response.error || !response.ok) {
         handleSubmitError(response, setError);
         setIsSubmitting(false);

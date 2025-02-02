@@ -1,7 +1,6 @@
 import {
   Classe as klass,
   Course as Kourse,
-  CourseSchedule as ICourseSchedule,
   Student as IStudent,
   StudentAttendance as IStudentAttendance,
   StudentNotification as IStudentNotification,
@@ -48,13 +47,16 @@ export type StudentNotification = IStudentNotification;
 export type UserNotification = IUserNotification;
 
 export type Classe = klass & {
+  id: number;
+  slug: string;
   _count: { classTeacher: number; classCourse: number; classStudent: number };
 };
 
 export type Course = Kourse & {
-  studentAttendances: IStudentAttendance[];
-  teacherAttendances: ITeacherAttendance[];
-  courseSchedules: ICourseSchedule[];
+  description: string;
+  classCourses: {
+    classe: { name: string; description: string; slug: string };
+  };
 };
 
 export type StudentAttendance = IStudentAttendance;
@@ -103,6 +105,11 @@ export type LoginBody = Omit<LoginInput, 'role'> & {
 };
 
 export type CreateNewClassInput = {
+  name: string;
+  description: string;
+};
+
+export type CreateNewCourseInput = {
   name: string;
   description: string;
 };

@@ -20,7 +20,7 @@ export const requiredFielConfig = {
 
 export function useRegisterForm({ redirectTo }) {
   /**
-   * @type {import("react-hook-form").UseFormReturn<CreateUserInput>}
+   * @type {import('react-hook-form').UseFormReturn<CreateUserInput>}
    */
   const {
     handleSubmit,
@@ -73,7 +73,6 @@ export function useRegisterForm({ redirectTo }) {
       }
       router.push('/');
       reset();
-      console.log(response);
     } catch (error) {
       console.error(error);
       setIsSubmitting(false);

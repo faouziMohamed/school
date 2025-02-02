@@ -4,7 +4,7 @@ import {
   adaptUserFromDb,
   dbUserRoleToFrontUserRole,
   discoverFrontUserRole,
-  findMissingField,
+  findUserMissingField,
   hashPassword,
   verifyPassword,
 } from '@/lib/helpers/utils.server';
@@ -78,7 +78,7 @@ export const authOptions = {
             status: 409,
           });
         }
-        const missingFields = findMissingField(credentials);
+        const missingFields = findUserMissingField(credentials);
         if (missingFields.length > 0) {
           throw new AuthErrorException({
             message: 'Some fields are mandatory but they are missing',
@@ -87,7 +87,7 @@ export const authOptions = {
         }
         const hashPwd = await hashPassword(password);
         /**
-         * @type {Omit<CreateUserInput, "role">}
+         * @type {Omit<CreateUserInput, 'role'>}
          */
         const userBody = {
           firstName: capitalizeWords(credentials.firstName),

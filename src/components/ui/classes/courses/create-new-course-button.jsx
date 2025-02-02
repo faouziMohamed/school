@@ -1,8 +1,8 @@
 'use client';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { CreateNewStudentForm } from '@/components/ui/classes/create-new-student-form';
-import { SelectUser } from '@/components/ui/classes/select-user';
+import { CreateNewCourseForm } from '@/components/ui/classes/courses/create-new-course-form';
+import { SelectCourse } from '@/components/ui/classes/courses/select-course';
 import {
   DialogActionTrigger,
   DialogBody,
@@ -14,22 +14,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { submitCreateNewStudentForGivenClass } from '@/lib/packages/classes/actions/students.action';
+import { submitCreateNewCourseForGivenClass } from '@/lib/packages/classes/actions/courses.action';
 import { IconButton, Stack, Text } from '@chakra-ui/react';
-import * as React from 'react';
 import { useActionState, useState } from 'react';
 import { BsPlusSquareFill } from 'react-icons/bs';
 
 /**
- *
  * @param {object} props
  * @param {Classe} props.klass
  */
-export function CreateNewStudentButton({ klass }) {
+export function CreateNewCourseButton({ klass }) {
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
   const [state, action, isPending] = useActionState(
-    submitCreateNewStudentForGivenClass,
+    submitCreateNewCourseForGivenClass,
     { success: false, error: null },
   );
 
@@ -50,16 +48,16 @@ export function CreateNewStudentButton({ klass }) {
       <DialogContent m='0.5rem'>
         <DialogHeader>
           <DialogTitle>
-            <Text>Add a new Student to this class ({klass.name})</Text>
+            <Text>Add a new Course to this class ({klass.name})</Text>
           </DialogTitle>
         </DialogHeader>
         <DialogBody pb='4'>
           <Alert fontSize='sm'>
-            Here you can search for a student to add to this class below or
-            create a new student account.
+            Here you can search for a course to add to this class below or
+            create a add new course.
           </Alert>
           <Stack pt='1rem'>
-            <SelectUser onClose={onClose} klass={klass} role='student' />
+            <SelectCourse onClose={onClose} klass={klass} />
           </Stack>
           <Text
             textAlign='center'
@@ -68,10 +66,10 @@ export function CreateNewStudentButton({ klass }) {
             color='gray.600'
             py='1.3rem'
           >
-            Or create a new student
+            Or create a new course
           </Text>
           <Stack gap='5'>
-            <CreateNewStudentForm
+            <CreateNewCourseForm
               onClose={onClose}
               state={state}
               action={action}

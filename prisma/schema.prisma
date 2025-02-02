@@ -96,11 +96,11 @@ model ClassStudent {
 }
 
 model Course {
-  id          Int           @id @default(autoincrement())
-  name        String
-  slug        String        @unique
-  description String?       @db.Text
-  classCourse ClassCourse[]
+  id           Int           @id @default(autoincrement())
+  name         String
+  slug         String        @unique
+  description  String?       @db.Text
+  classCourses ClassCourse[]
 
   @@index([slug])
   @@map("courses")
@@ -114,6 +114,7 @@ model ClassCourse {
   classe         Classe           @relation(fields: [classId], references: [id], onDelete: Cascade)
   courseSchedule CourseSchedule[]
 
+  @@unique([courseId, classId])
   @@map("class_courses")
 }
 

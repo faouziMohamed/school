@@ -2,22 +2,17 @@ import { getClassById } from '@/lib/packages/classes/classes.service';
 import {
   createNewCourse,
   getAllCourses,
+  searchStudentsByName,
 } from '@/lib/packages/courses/courses.service';
 import { getUserById } from '@/lib/packages/teachers/teacher.service';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
-  const courses = await getAllCourses();
-  if (!courses) {
-    return NextResponse.json(
-      {
-        message: 'No user exists on the app, retry later',
-        users: [],
-      },
-      { status: 400 },
-    );
-  }
-  return NextResponse.json({ courses });
+export async function GET(request) {
+  const search = request.nextUrl.searchParams.get('search');
+  const courses = search
+    ? await searchStudentsByName(search)
+    : await getAllCourses();
+  return NextResponse.json({ data: courses });
 }
 
 export async function POST(request) {
@@ -64,8 +59,6 @@ export async function POST(request) {
     );
   }
 
-  console.log({ body });
-
   const teacher = await getUserById(teacherId);
   if (!teacher) {
     return NextResponse.json(
@@ -92,7 +85,6 @@ export async function POST(request) {
     teacherId,
     classId,
   });
-  console.log({ newCourse });
   if (!newCourse) {
     return NextResponse.json(
       {

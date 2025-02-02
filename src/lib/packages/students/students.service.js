@@ -40,7 +40,6 @@ export async function createNewStudent(studentData) {
       select: STUDENT_SELECT,
     });
 
-    console.log('user', newStudent);
     return newStudent;
   } catch (error) {
     console.log('error?', error.message);

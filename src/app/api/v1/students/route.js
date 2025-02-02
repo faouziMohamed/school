@@ -77,7 +77,6 @@ export async function POST(request) {
   };
 
   const newStudent = await createNewStudent(data);
-  console.log({ newStudent });
   if (!newStudent) {
     return NextResponse.json(
       {

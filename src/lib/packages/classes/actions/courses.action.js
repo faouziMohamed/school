@@ -1,10 +1,10 @@
 'use server';
 
 import prisma from '@/lib/db/prisma.orm';
-import { capitalizeWords } from '@/lib/helpers/utils';
-import { findUserMissingField, hashPassword } from '@/lib/helpers/utils.server';
+import { capitalize, generateSlug } from '@/lib/helpers/utils';
+import { findCourseMissingField } from '@/lib/helpers/utils.server';
 import { getClassById } from '@/lib/packages/classes/classes.service';
-import { isStudentExistByEmail } from '@/lib/packages/students/students.service';
+import { findCourseBySlug } from '@/lib/packages/courses/courses.service';
 import { ROUTES } from '@/lib/routes/client.route';
 import { revalidatePath } from 'next/cache';
 
@@ -14,62 +14,64 @@ import { revalidatePath } from 'next/cache';
  * @param {FormData} formData
  * @returns {Promise<{success: boolean, error: null|string}>}
  */
-export async function submitCreateNewStudentForGivenClass(previous, formData) {
+export async function submitCreateNewCourseForGivenClass(previous, formData) {
   try {
     // noinspection JSValidateTypes
     /**
-     * @type {CreateUserInput&{classId: number; slug: string}}
+     * @type {CreateNewCourseInput&{classId: number; slug: string}}
      */
     const data = Object.fromEntries(formData);
-    const missingFields = findUserMissingField(data);
+    const missingFields = findCourseMissingField(data);
 
-    if (missingFields.length > 0) {
+    if (!data.slug) {
+      missingFields.push('slug');
+    }
+    if (!data.classId) {
+      missingFields.push('classId');
+    }
+
+    if (missingFields.length) {
       return {
         success: false,
         error: `Missing fields: ${missingFields.join(', ')}`,
       };
     }
+    const courseSlug = generateSlug(data.name);
+    const courseExists = await findCourseBySlug(courseSlug);
 
-    const studentExists = await isStudentExistByEmail(data.email);
-
-    if (studentExists) {
+    if (courseExists) {
       return {
         success: false,
-        error: 'A Student with this email already exists',
+        error:
+          'A course with the same name already exists, please choose another name',
       };
     }
 
     const classExists = await getClassById(Number(data.classId));
     if (!classExists) {
       return {
-        success: false,
         error: 'The class does not exist, please select a valid class',
+        success: false,
       };
     }
-    const hashPwd = await hashPassword(data.password);
-    const profileCreate = {
-      firstName: capitalizeWords(data.firstName),
-      lastName: capitalizeWords(data.lastName),
-      phone: data.phone,
-    };
-    const newStudent = await prisma.classStudent.create({
+    const newClassCourse = await prisma.classCourse.create({
       data: {
         classe: { connect: { id: Number(data.classId) } },
-        student: {
+        course: {
           create: {
-            email: data.email.toLocaleLowerCase(),
-            password: hashPwd,
-            profile: { create: profileCreate },
+            name: capitalize(data.name),
+            description: capitalize(data.description),
+            slug: courseSlug,
           },
         },
       },
     });
 
-    if (!newStudent) {
+    if (!newClassCourse) {
       return {
         success: false,
         error:
-          'An error occurred while creating the student, please try again later',
+          'An error occurred while creating the course, please try again later',
       };
     }
 
@@ -82,45 +84,48 @@ export async function submitCreateNewStudentForGivenClass(previous, formData) {
 }
 
 /**
- * Create a new student and add them the the given class
+ * Create a new student and add them the  given class
  * @param {Object} props
  * @param {number} props.classId
- * @param {number} props.studentId
+ * @param {number} props.courseId
  * @param {string} props.classSlug
  * @returns {Promise<{success: boolean, error: null|string}>}
  */
-export async function submitAddUserToClass({ classId, studentId, classSlug }) {
+export async function submitAddCourseToClass({ classId, courseId, classSlug }) {
   try {
     // check if the classStudent with classId and userId exists already
-    const existing = await prisma.classStudent.findUnique({
+    const existing = await prisma.classCourse.findUnique({
       where: {
-        studentId_classId: {
-          studentId: Number(studentId),
+        courseId_classId: {
+          courseId: Number(courseId),
           classId: Number(classId),
         },
       },
     });
     if (existing) {
-      return { success: false, error: 'The student is already in the class' };
+      return {
+        success: false,
+        error: 'The course is already added to the class',
+      };
     }
-    const newStudent = await prisma.classStudent.create({
+    const newClassCourse = await prisma.classCourse.create({
       data: {
         classId: Number(classId),
-        studentId: Number(studentId),
+        courseId: Number(courseId),
       },
     });
 
-    if (!newStudent) {
+    if (!newClassCourse) {
       return {
         success: false,
         error:
-          'An error occurred while adding the student to the class, please try again later',
+          'An error occurred while adding the course to the class, please try again later',
       };
     }
     revalidatePath(ROUTES.CLASS_ROOMS_SLUG(classSlug));
     return { success: true, error: null };
   } catch (e) {
     console.error(e);
-    return { error: 'Failed to add student to class', success: false };
+    return { error: 'Failed to add the course to the class', success: false };
   }
 }

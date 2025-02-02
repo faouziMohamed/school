@@ -25,6 +25,7 @@ const defaultValues = {
 
 export function AddNewClassButton() {
   const [open, setOpen] = useState(false);
+  const onClose = () => setOpen(false);
   const [state, action, isPending] = useActionState(submitCreateNewClass, {
     success: false,
     error: null,
@@ -36,6 +37,7 @@ export function AddNewClassButton() {
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = form;
@@ -45,13 +47,15 @@ export function AddNewClassButton() {
       toaster.success({
         title: 'Class created successfully',
       });
+      onClose();
+      reset();
     } else if (state.error) {
       toaster.error({
         title: 'Failed to create class',
         description: state.error,
       });
     }
-  }, [state]);
+  }, [reset, state]);
 
   const onSubmit = handleSubmit((data) => {
     startTransition(() => {
@@ -68,7 +72,10 @@ export function AddNewClassButton() {
       closeOnInteractOutside={false}
       lazyMount
       open={open}
-      onOpenChange={(e) => setOpen(e.open)}
+      onOpenChange={(e) => {
+        setOpen(e.open);
+        reset();
+      }}
       placement='center'
     >
       <DialogTrigger asChild>

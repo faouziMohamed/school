@@ -1,5 +1,10 @@
-import { CLASSE_SELECT } from './classe.constant';
 import prisma from '@/lib/db/prisma.orm';
+import { generateSlug } from '@/lib/helpers/utils';
+import { adaptUserFromDb } from '@/lib/helpers/utils.server';
+import { CLASSE_SELECT } from '@/lib/packages/classes/classe.constant';
+import { CLASS_COURSE_SELECT } from '@/lib/packages/courses/course.constant';
+import { CLASS_STUDENTS_SELECT } from '@/lib/packages/students/student.constant';
+import { CLASS_TEACHERS_SELECT } from '@/lib/packages/teachers/teacher.constant';
 
 /**
  * @param {Object} data
@@ -14,7 +19,7 @@ export async function createNewClass(data) {
   }
 
   return prisma.classe.create({
-    data: { name, description },
+    data: { name, description, slug: generateSlug(name) },
     select: CLASSE_SELECT,
   });
 }
@@ -48,4 +53,34 @@ export async function getAllClasses() {
   return prisma.classe.findMany({
     select: CLASSE_SELECT,
   });
+}
+
+export async function getStudentsByClassId(klass) {
+  const students = await prisma.classStudent.findMany({
+    where: { classId: klass.id },
+    include: {
+      student: { select: CLASS_STUDENTS_SELECT },
+    },
+  });
+  return students.map((student) => adaptUserFromDb(student.student, 'student'));
+}
+
+export async function getTeachersByClassId(klass) {
+  const students = await prisma.classTeacher.findMany({
+    where: { classId: klass.id },
+    include: {
+      teacher: { select: CLASS_TEACHERS_SELECT },
+    },
+  });
+  return students.map((student) => adaptUserFromDb(student.teacher, 'teacher'));
+}
+
+export async function getCoursesByClassId(klass) {
+  const classCourse = await prisma.classCourse.findMany({
+    where: { classId: klass.id },
+    select: {
+      course: { select: CLASS_COURSE_SELECT },
+    },
+  });
+  return classCourse.map((cc) => cc.course);
 }

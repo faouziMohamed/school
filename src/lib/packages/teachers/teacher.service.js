@@ -1,4 +1,4 @@
-import { PROFILE_SELECT, USER_SELECT } from './teacher.constant';
+import { USER_PROFILE_SELECT, USER_SELECT } from './teacher.constant';
 import prisma from '@/lib/db/prisma.orm';
 import { getTeacherWithClasses } from '@/lib/helpers/utils.server';
 
@@ -67,7 +67,7 @@ export async function getUserByEmail(email) {
         email: true,
         password: true,
         profile: {
-          select: PROFILE_SELECT,
+          select: USER_PROFILE_SELECT,
         },
       },
     });

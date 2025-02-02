@@ -28,7 +28,7 @@ export function formatDateRelative(date) {
 export function generateSlug(title) {
   return slugify(title, {
     lower: true,
-    locale: 'fr',
+    locale: 'en',
   });
 }
 

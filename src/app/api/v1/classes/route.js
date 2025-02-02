@@ -31,12 +31,10 @@ export async function POST(request) {
     );
   }
 
-  console.log({ body });
   const newClass = await createNewClass({
     description,
     name,
   });
-  console.log({ newClass });
   if (!newClass) {
     return NextResponse.json(
       {

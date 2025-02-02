@@ -1,4 +1,4 @@
-export const PROFILE_SELECT = {
+export const USER_PROFILE_SELECT = {
   id: true,
   firstName: true,
   lastName: true,
@@ -10,7 +10,7 @@ export const PROFILE_SELECT = {
 export const USER_SELECT = {
   id: true,
   email: true,
-  profile: { select: PROFILE_SELECT },
+  profile: { select: USER_PROFILE_SELECT },
   classTeachers: {
     select: {
       classe: {
@@ -27,5 +27,5 @@ export const USER_SELECT = {
 export const CLASS_TEACHERS_SELECT = {
   id: true,
   email: true,
-  profile: { select: PROFILE_SELECT },
+  profile: { select: USER_PROFILE_SELECT },
 };
