@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 /**
  * @param {Object} params
  * @param {number} params.dayIndex
@@ -29,7 +31,7 @@ function shouldDisplayClassOnSchedule({
     (Number(currentHour) === startAt.getHours()
       ? isInThe30MinSlot
         ? true
-        : !startAt.getMinutes() // do not display the class if the start minute is 30
+        : startAt.getMinutes() < 30 // do not display the class if the start minute is 30
       : true) &&
     // --
 
@@ -59,14 +61,13 @@ export function currentTimeSlot(h) {
  * @param {boolean} params.isInThe30MinSlot
  * @param {ScheduleData[]} scheduleData
  */
-
 export function getSchedule({
   dayIndex,
   currentHour,
   isInThe30MinSlot,
   scheduleData,
 }) {
-  return scheduleData.find((schedule) =>
+  const s = scheduleData.find((schedule) =>
     shouldDisplayClassOnSchedule({
       dayIndex: dayIndex + 1,
       currentHour,
@@ -74,4 +75,27 @@ export function getSchedule({
       schedule: schedule,
     }),
   );
+  if (!s) {
+    return null;
+  }
+  s.startAt = new Date(s.startAt);
+  s.endAt = new Date(s.endAt);
+  return s;
+}
+
+/**
+ * @param {Date} date
+ */
+export function formatDate(date) {
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+/**
+ * @param {Date|string} date
+ */
+export function formatTime(date) {
+  return dayjs(date).format('HH:mm');
 }

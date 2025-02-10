@@ -1,3 +1,4 @@
+import { formatDate } from '@/lib/packages/schedules/schedules.utils';
 import { Flex, IconButton, Text } from '@chakra-ui/react';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
@@ -13,13 +14,6 @@ export function CalendarHeader({ currentDate, onPreviousWeek, onNextWeek }) {
 
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
-
-  /**
-   * @param {Date} date
-   */
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
 
   return (
     <Flex align='center' gap={4}>

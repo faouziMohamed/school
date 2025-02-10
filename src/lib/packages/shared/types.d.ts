@@ -114,12 +114,12 @@ export type CreateNewCourseInput = {
   description: string;
 };
 
-interface ScheduleData {
+export type ScheduleData = {
   id: string;
   courseId: string;
   courseName: string;
-  startAt: string;
-  endAt: string;
+  startAt: string | Date;
+  endAt: string | Date;
   teacherName: string;
   className: string;
-}
+};
