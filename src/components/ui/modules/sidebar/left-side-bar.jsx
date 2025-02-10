@@ -1,28 +1,20 @@
 'use client';
 import { navBarItems } from '@/components/ui/modules/sidebar/nav-bar-items';
+import { useActivePage } from '@/components/ui/modules/sidebar/use-active-page';
 import { capitalize } from '@/lib/helpers/utils';
 import { Button, Link, List, Separator, Stack, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 import { MdExitToApp } from 'react-icons/md';
 
 export function LeftSideBar() {
-  const [active, setActive] = useState(-1);
-  const pathname = usePathname();
-  const router = useRouter();
   const { data: session } = useSession();
   const user = session?.user;
-  useEffect(() => {
-    console.log('pathname', pathname);
-    const activePath = navBarItems.find((item) =>
-      item.href.startsWith(pathname),
-    );
-    if (activePath) {
-      setActive(activePath.id);
-    }
-  }, [active, pathname]);
+  const router = useRouter();
+  const { page } = useActivePage();
+  const pageId = page?.id;
+
   return (
     <Stack
       maxW='18rem'
@@ -75,7 +67,7 @@ export function LeftSideBar() {
                   py='0.5rem'
                   fontSize='md'
                   bg={
-                    Number(active) === Number(item.id)
+                    Number(pageId) === Number(item.id)
                       ? 'blue.700'
                       : 'transparent'
                   }

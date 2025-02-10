@@ -1,4 +1,5 @@
 import { genSequence } from '@/lib/helpers/utils';
+import { ROUTES } from '@/lib/routes/client.route';
 import { Icon } from '@chakra-ui/react';
 import { CgEreader } from 'react-icons/cg';
 import { GrSchedule } from 'react-icons/gr';
@@ -24,7 +25,7 @@ export const navBarItems = [
   {
     id: genId(),
     name: 'Home',
-    href: '/',
+    href: ROUTES.HOME,
     permissions: ['admin', 'teacher', 'student'],
     Icon: <MdHome />,
     description: 'Home page',
@@ -32,7 +33,7 @@ export const navBarItems = [
   {
     id: genId(),
     name: 'My Courses',
-    href: '/my-courses',
+    href: ROUTES.MY_COURSES,
     permissions: ['student', 'teacher'],
     Icon: <MdBook />,
     description: 'Manage The courses you are participating in',
@@ -40,7 +41,7 @@ export const navBarItems = [
   {
     id: genId(),
     name: 'My Classes',
-    href: '/my-classes',
+    href: ROUTES.MY_CLASSES,
     permissions: ['student', 'teacher'],
     Icon: <SiGoogleclassroom />,
     description: 'Manage The classes you are participating in',
@@ -48,7 +49,7 @@ export const navBarItems = [
   {
     id: genId(),
     name: 'Class Rooms',
-    href: '/class-rooms',
+    href: ROUTES.CLASS_ROOMS,
     permissions: ['admin'],
     Icon: <CgEreader />,
     description: 'Manage all classes and assign teachers',
@@ -56,15 +57,7 @@ export const navBarItems = [
   {
     id: genId(),
     name: 'Course Catalog',
-    href: '/course-catalog',
-    permissions: ['teacher'],
-    Icon: <PiReadCvLogoDuotone />,
-    description: 'List of all available courses to join',
-  },
-  {
-    id: genId(),
-    name: 'Course Catalog',
-    href: '/course-catalog',
+    href: ROUTES.COURSE_CATALOG,
     permissions: ['student', 'teacher', 'admin'],
     Icon: <PiReadCvLogoDuotone />,
     description: 'List of all available courses to join',
@@ -72,7 +65,7 @@ export const navBarItems = [
   {
     id: genId(),
     name: 'Courses Schedule',
-    href: '/courses-schedule',
+    href: ROUTES.COURSES_SCHEDULE,
     permissions: ['student', 'teacher', 'admin'],
     Icon: <GrSchedule />,
     description: 'View the schedule of all courses and classes',
@@ -80,7 +73,7 @@ export const navBarItems = [
   {
     id: genId(),
     name: 'Users',
-    href: '/users',
+    href: ROUTES.USERS,
     permissions: ['admin'],
     Icon: <PiUsersDuotone />,
     description: 'Manage users and roles',
@@ -88,7 +81,7 @@ export const navBarItems = [
   {
     id: genId(),
     name: 'Settings',
-    href: '/settings',
+    href: ROUTES.SETTINGS,
     permissions: ['student', 'teacher', 'admin'],
     Icon: (
       <Icon fontSize={20} asChild>

@@ -12,7 +12,8 @@ import { getClassBySlug } from '@/lib/packages/classes/classes.service';
 import { Card, Heading, Show, Stack, Tabs } from '@chakra-ui/react';
 import { getServerSession } from 'next-auth';
 import { FaChalkboardTeacher } from 'react-icons/fa';
-import { LuSquareCheck, LuUser } from 'react-icons/lu';
+import { FaBook } from 'react-icons/fa6';
+import { LuUser } from 'react-icons/lu';
 
 export const dynamic = 'force-dynamic';
 
@@ -96,7 +97,7 @@ export default async function ClassRoomsPage({ params: nextParams }) {
             Teachers
           </Tabs.Trigger>
           <Tabs.Trigger value='courses'>
-            <LuSquareCheck />
+            <FaBook />
             Courses
           </Tabs.Trigger>
           <Tabs.Indicator hideBelow='sm' rounded='l2' />
