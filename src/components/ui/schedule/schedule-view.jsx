@@ -2,15 +2,17 @@
 
 import { CalendarHeader } from './calendar-header';
 import { WeeklySchedule } from './weekly-schedule';
-import { Box, Flex, Stack, Tabs } from '@chakra-ui/react';
+import { genSequence } from '@/lib/helpers/utils';
+import { Box, Flex, Tabs } from '@chakra-ui/react';
 import { useState } from 'react';
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import { PiStudentFill } from 'react-icons/pi';
 import { SiGoogleclassroom } from 'react-icons/si';
 
+const genId = genSequence();
 const mockScheduleData = [
   {
-    id: '1',
+    id: genId(),
     courseId: 'MATH101',
     courseName: 'Mathematics',
     startAt: '2024-02-02T08:30:00',
@@ -19,7 +21,7 @@ const mockScheduleData = [
     className: 'Terminal S',
   },
   {
-    id: '2',
+    id: genId(),
     courseId: 'ENG101',
     courseName: 'English',
     startAt: '2024-02-01T09:15:00',
@@ -28,24 +30,61 @@ const mockScheduleData = [
     className: 'CM2',
   },
   {
-    id: '3',
+    id: genId(),
     courseId: 'PHYS101',
     courseName: 'Physics',
     startAt: '2024-01-31T14:30:00',
-    endAt: '2024-01-31T16:00:00',
+    endAt: '2024-01-31T16:25:00',
     teacherName: 'Dr. Faouzi',
     className: 'CM2',
   },
   {
-    id: '3',
+    id: genId(),
     courseId: 'TECH101',
     courseName: 'Technology',
     startAt: '2024-01-29T12:30:00',
-    endAt: '2024-01-29T15:15:00',
+    endAt: '2024-01-29T15:55:00',
+    teacherName: 'Prof. John',
+    className: 'Terminal S',
+  },
+  {
+    id: genId(),
+    courseId: 'BIO101',
+    courseName: 'Biology',
+    startAt: '2024-01-30T10:40:00',
+    endAt: '2024-01-30T12:30:00',
+    teacherName: 'Dr. Faouzi',
+    className: 'CM2',
+  },
+  {
+    id: genId(),
+    courseId: 'HIST101',
+    courseName: 'History',
+    startAt: '2024-01-30T08:30:00',
+    endAt: '2024-01-30T13:40:00',
+    teacherName: 'Dr. Smith',
+    className: 'Terminal S',
+  },
+  {
+    id: genId(),
+    courseId: 'CHEM101',
+    courseName: 'Chemistry',
+    startAt: '2024-01-30T14:30:00',
+    endAt: '2024-01-30T16:25:00',
+    teacherName: 'Dr. Faouzi',
+    className: 'CM2',
+  },
+  {
+    id: genId(),
+    courseId: 'GEO101',
+    courseName: 'Geography',
+    startAt: '2024-01-29T12:30:00',
+    endAt: '2024-01-29T15:55:00',
     teacherName: 'Prof. John',
     className: 'Terminal S',
   },
 ];
+console.log(mockScheduleData);
 
 const WEEK_DAYS = [
   'Monday',
@@ -55,10 +94,9 @@ const WEEK_DAYS = [
   'Friday',
   'Saturday',
 ];
-// const TIME_SLOTS = Array.from({ length: 12 }, (_, i) => i + 8); // 8 AM to 7 PM
 // time slots each 30minutes from 8AM to 7PM
 // the same time should be repeated twice for each hour to represent the 30 minutes
-const TIME_SLOTS = Array.from({ length: 24 }, (_, i) => i / 2 + 8); // 8 AM to 7 PM
+const TIME_SLOTS = Array.from({ length: 32 }, (_, i) => i / 2 + 7); // 7 AM to 7 PM
 const TABS = {
   class: 'class',
   teacher: 'teacher',
@@ -69,7 +107,7 @@ export function ScheduleView() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   return (
-    <Stack
+    <Box
       w='100%'
       p={4}
       gap='1rem'
@@ -152,6 +190,6 @@ export function ScheduleView() {
           />
         </Tabs.Content>
       </Tabs.Root>
-    </Stack>
+    </Box>
   );
 }

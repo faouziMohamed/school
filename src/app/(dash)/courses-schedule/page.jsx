@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export default function CoursesSchedulePage() {
   return (
-    <Stack>
+    <Stack w='100%'>
       <Card.Root>
         <Card.Body>
           <Heading size='lg'>Course Schedule</Heading>

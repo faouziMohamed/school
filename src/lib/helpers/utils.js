@@ -70,3 +70,62 @@ export function getPasswordScore(password) {
 
   return { score, message };
 }
+
+/**
+ * Generate foreground and background colors from a string
+ * @param {string} str - Input string
+ * @param {number} [brightnessAdjustment=0] - Amount to adjust the brightness (positive for brighter, negative for darker)
+ * @returns {Object} - Object containing foreground and background colors
+ */
+export function stringToHexColors(str, brightnessAdjustment = 0) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  let backgroundColor = '#';
+  for (let i = 0; i < 3; i++) {
+    let value = (hash >> (i * 8)) & 0xff;
+    value = Math.min(Math.max(value + brightnessAdjustment, 0), 255); // Adjust brightness
+    backgroundColor += ('00' + value.toString(16)).slice(-2);
+  }
+
+  // Calculate the foreground color (black or white) based on the background color brightness
+  const r = parseInt(backgroundColor.slice(1, 3), 16);
+  const g = parseInt(backgroundColor.slice(3, 5), 16);
+  const b = parseInt(backgroundColor.slice(5, 7), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  const foregroundColor = brightness > 128 ? '#000000' : '#FFFFFF';
+
+  return { foregroundColor, backgroundColor };
+}
+
+/**
+ * Adjust the brightness of a color
+ * @param {string} color - Input color in RGB or hex format
+ * @param {number} brightnessAdjustment - Amount to adjust the brightness (positive for brighter, negative for darker)
+ * @returns {string} - Modified color in hex format
+ */
+export function adjustColorBrightness(color, brightnessAdjustment) {
+  let r, g, b;
+
+  if (color.startsWith('#')) {
+    // Hex color
+    r = parseInt(color.slice(1, 3), 16);
+    g = parseInt(color.slice(3, 5), 16);
+    b = parseInt(color.slice(5, 7), 16);
+  } else if (color.startsWith('rgb')) {
+    // RGB color
+    const rgbValues = color.match(/\d+/g);
+    r = parseInt(rgbValues[0], 10);
+    g = parseInt(rgbValues[1], 10);
+    b = parseInt(rgbValues[2], 10);
+  } else {
+    throw new Error('Invalid color format');
+  }
+
+  r = Math.min(Math.max(r + brightnessAdjustment, 0), 255);
+  g = Math.min(Math.max(g + brightnessAdjustment, 0), 255);
+  b = Math.min(Math.max(b + brightnessAdjustment, 0), 255);
+
+  return `#${('00' + r.toString(16)).slice(-2)}${('00' + g.toString(16)).slice(-2)}${('00' + b.toString(16)).slice(-2)}`;
+}
