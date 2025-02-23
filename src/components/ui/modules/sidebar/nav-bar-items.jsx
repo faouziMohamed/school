@@ -64,8 +64,8 @@ export const navBarItems = [
   },
   {
     id: genId(),
-    name: 'Courses Schedule',
-    href: ROUTES.COURSES_SCHEDULE,
+    name: 'Schedules',
+    href: ROUTES.SCHEDULES,
     permissions: ['student', 'teacher', 'admin'],
     Icon: <GrSchedule />,
     description: 'View the schedule of all courses and classes',

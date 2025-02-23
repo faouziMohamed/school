@@ -1,23 +1,61 @@
 'use client';
+import {
+  DrawerBackdrop,
+  DrawerBody,
+  DrawerCloseTrigger,
+  DrawerContent,
+  DrawerRoot,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
 import { navBarItems } from '@/components/ui/modules/sidebar/nav-bar-items';
 import { useActivePage } from '@/components/ui/modules/sidebar/use-active-page';
 import { capitalize } from '@/lib/helpers/utils';
-import { Button, Link, List, Separator, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  IconButton,
+  Link,
+  List,
+  Separator,
+  Show,
+  Spinner,
+  Stack,
+  Text,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import { MdExitToApp } from 'react-icons/md';
+import { useState } from 'react';
+import { MdExitToApp, MdMenuOpen } from 'react-icons/md';
 
 export function LeftSideBar() {
+  const [isMd] = useMediaQuery(['(min-width: 768px)'], { ssr: false });
   const { data: session } = useSession();
-  const user = session?.user;
+  if (!session?.user) {
+    return <Spinner />;
+  }
+
+  /** @type {FrontUser} */
+  const user = session.user;
+
+  return (
+    <Show when={isMd} fallback={<MobileLeftSideBar user={user} />}>
+      <SideBar user={user} />
+    </Show>
+  );
+}
+
+/**
+ * @param {Object} props
+ * @param {FrontUser} props.user
+ */
+export function SideBar({ user }) {
   const router = useRouter();
   const { page } = useActivePage();
   const pageId = page?.id;
 
   return (
     <Stack
-      maxW='18rem'
       w='100%'
       h='100%'
       bgColor={user.role === 'student' ? 'cyan.600' : 'gray.700'}
@@ -25,7 +63,9 @@ export function LeftSideBar() {
       as='header'
       pt='2rem'
       flexShrink={0}
-      hideBelow='md'
+      css={{
+        '@media(min-width: 766px)': { maxW: '18rem' },
+      }}
     >
       <Stack px='1rem'>
         <Stack
@@ -113,5 +153,42 @@ export function LeftSideBar() {
         </Stack>
       </Stack>
     </Stack>
+  );
+}
+
+/**
+ * @param {Object} props
+ * @param {FrontUser} props.user
+ */
+export function MobileLeftSideBar({ user }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <DrawerRoot
+      placement='start'
+      open={open}
+      onOpenChange={(e) => setOpen(e.open)}
+    >
+      <DrawerBackdrop />
+      <DrawerTrigger asChild>
+        <IconButton
+          position='absolute'
+          zIndex={100}
+          variant='outline'
+          size='md'
+          bg='primary'
+          color='white'
+          left='0.5rem'
+          top='0.5rem'
+        >
+          <MdMenuOpen />
+        </IconButton>
+      </DrawerTrigger>
+      <DrawerContent p={0}>
+        <DrawerBody p={0}>
+          <SideBar user={user} />
+        </DrawerBody>
+        <DrawerCloseTrigger bgColor='white' />
+      </DrawerContent>
+    </DrawerRoot>
   );
 }
