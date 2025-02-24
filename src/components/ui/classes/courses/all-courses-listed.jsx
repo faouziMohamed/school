@@ -1,15 +1,21 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import { genSequence } from '@/lib/helpers/utils';
-import { Table } from '@chakra-ui/react';
+import { useCourseByClassIdQuery } from '@/lib/packages/courses/courses.queries';
+import { Spinner, Table } from '@chakra-ui/react';
 import Link from 'next/link';
 
 /**
  *
  * @param {Object} props
- * @param {Course[]} props.courses
+ * @param {Classe} props.klass
  */
-export function AllCoursesListed({ courses }) {
+export function AllCoursesListed({ klass }) {
   const genId = genSequence(1);
+  const { data, isLoading } = useCourseByClassIdQuery({
+    classId: klass.id,
+  });
+  if (isLoading) return <Spinner size='lg' />;
   return (
     <Table.ScrollArea borderWidth='1px'>
       <Table.Root
@@ -28,7 +34,7 @@ export function AllCoursesListed({ courses }) {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {courses.map((course) => (
+          {data.map((course) => (
             <Table.Row key={course.id}>
               <Table.Cell>{genId()}</Table.Cell>
               <Table.Cell>{course.name}</Table.Cell>

@@ -6,7 +6,7 @@ export const ROUTES = {
   /** @param {string} slug */
   CLASS_ROOMS_SLUG: (slug) => `/class-rooms/${slug}`,
   COURSE_CATALOG: '/course-catalog',
-  COURSES_SCHEDULE: '/courses-schedule',
+  SCHEDULES: '/schedules',
   MY_COURSES: '/my-courses',
   MY_CLASSES: '/my-classes',
   USERS: '/users',

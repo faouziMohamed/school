@@ -1,15 +1,21 @@
 'use server';
 
-import prisma from '@/lib/db/prisma.orm';
-import { capitalize, generateSlug } from '@/lib/helpers/utils';
+import { generateSlug } from '@/lib/helpers/utils';
 import { findCourseMissingField } from '@/lib/helpers/utils.server';
-import { getClassById } from '@/lib/packages/classes/classes.service';
-import { findCourseBySlug } from '@/lib/packages/courses/courses.service';
+import {
+  createClassCourse,
+  getClassById,
+  getClassTeacherCourseByIds,
+} from '@/lib/packages/classes/classes.service';
+import {
+  assignCourseToTeacherOnClassByIds,
+  findCourseBySlug,
+} from '@/lib/packages/courses/courses.service';
 import { ROUTES } from '@/lib/routes/client.route';
 import { revalidatePath } from 'next/cache';
 
 /**
- * Create a new student and add them the the given class
+ * Create a new student and add them the given class
  * @param {Object} previous
  * @param {FormData} formData
  * @returns {Promise<{success: boolean, error: null|string}>}
@@ -54,18 +60,7 @@ export async function submitCreateNewCourseForGivenClass(previous, formData) {
         success: false,
       };
     }
-    const newClassCourse = await prisma.classCourse.create({
-      data: {
-        classe: { connect: { id: Number(data.classId) } },
-        course: {
-          create: {
-            name: capitalize(data.name),
-            description: capitalize(data.description),
-            slug: courseSlug,
-          },
-        },
-      },
-    });
+    const newClassCourse = await createClassCourse(data, courseSlug);
 
     if (!newClassCourse) {
       return {
@@ -76,7 +71,8 @@ export async function submitCreateNewCourseForGivenClass(previous, formData) {
     }
 
     revalidatePath(ROUTES.CLASS_ROOMS_SLUG(data.slug));
-    return { success: true, error: null };
+    revalidatePath(ROUTES.SCHEDULES);
+    return { success: true, error: null, course: newClassCourse.course };
   } catch (e) {
     console.error(e);
     return { error: 'Failed to create class', success: false };
@@ -89,31 +85,22 @@ export async function submitCreateNewCourseForGivenClass(previous, formData) {
  * @param {number} props.classId
  * @param {number} props.courseId
  * @param {string} props.classSlug
- * @returns {Promise<{success: boolean, error: null|string}>}
+ * @returns {Promise<{success: boolean, error: null|string; course?: ClassCourse}>}
  */
 export async function submitAddCourseToClass({ classId, courseId, classSlug }) {
   try {
     // check if the classStudent with classId and userId exists already
-    const existing = await prisma.classCourse.findUnique({
-      where: {
-        courseId_classId: {
-          courseId: Number(courseId),
-          classId: Number(classId),
-        },
-      },
-    });
+    const existing = await getClassTeacherCourseByIds(classId, courseId);
     if (existing) {
       return {
         success: false,
         error: 'The course is already added to the class',
       };
     }
-    const newClassCourse = await prisma.classCourse.create({
-      data: {
-        classId: Number(classId),
-        courseId: Number(courseId),
-      },
-    });
+    const newClassCourse = await assignCourseToTeacherOnClassByIds(
+      classId,
+      courseId,
+    );
 
     if (!newClassCourse) {
       return {
@@ -123,7 +110,8 @@ export async function submitAddCourseToClass({ classId, courseId, classSlug }) {
       };
     }
     revalidatePath(ROUTES.CLASS_ROOMS_SLUG(classSlug));
-    return { success: true, error: null };
+    revalidatePath(ROUTES.SCHEDULES);
+    return { success: true, error: null, course: newClassCourse.course };
   } catch (e) {
     console.error(e);
     return { error: 'Failed to add the course to the class', success: false };

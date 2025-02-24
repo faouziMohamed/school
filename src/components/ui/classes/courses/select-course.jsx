@@ -30,13 +30,14 @@ import { SiGoogleclassroom } from 'react-icons/si';
  * @param {object} props
  * @param {() => void} props.onClose
  * @param {Classe} props.klass
+ * @param {FrontTeacher} props.teacher
  */
-export function SelectCourse({ onClose, klass }) {
-  const hook = useAddCourseToClass(onClose, klass);
-  const { open, setOpen, ref, handleSearch, courses, onAddCourseToClass } =
-    hook;
-  const { selectedCourse, setSelectedCourse, submitting, fetchingCourses } =
-    hook;
+export function SelectCourse({ onClose, klass, teacher }) {
+  const hook = useAddCourseToClass(onClose, klass, teacher);
+  const { courses, onAddCourseToClass } = hook;
+  const { open, setOpen, ref, handleSearch } = hook;
+  const { submitting, fetchingCourses } = hook;
+  const { selectedCourse, setSelectedCourse } = hook;
   return (
     <Stack>
       <Show when={!!selectedCourse}>
@@ -64,7 +65,7 @@ export function SelectCourse({ onClose, klass }) {
       >
         <PopoverTrigger asChild>
           <Field
-            label={`Search for a course to add to ${klass.name}`}
+            label={`Search for a course to add to ${klass?.name}`}
             pt='1rem'
           >
             <InputGroup
@@ -87,7 +88,7 @@ export function SelectCourse({ onClose, klass }) {
               <For each={courses}>
                 {
                   /**
-                   * @param {Course} course
+                   * @param {FrontCourse} course
                    */
                   (course) => (
                     <SelectableCourse
@@ -111,7 +112,7 @@ export function SelectCourse({ onClose, klass }) {
 
 /**
  * @param {object} props
- * @param {Course} props.course
+ * @param {FrontCourse} props.course
  * @param {() => void} props.onClick
  */
 function SelectableCourse({ onClick, course }) {
@@ -128,7 +129,7 @@ function SelectableCourse({ onClick, course }) {
     >
       <List.Item>
         <List.Indicator>
-          <Show when={!!course?.classCourses?.length}>
+          <Show when={!!course?.correlation?.length}>
             <Text
               as='span'
               fontFamilly='var(--font-secondary)'
@@ -136,10 +137,10 @@ function SelectableCourse({ onClick, course }) {
               display='inline'
               fontSize='xs'
             >
-              {course.classCourses?.length}
+              {course.correlation?.length}
             </Text>{' '}
           </Show>
-          {course?.classCourses?.length > 0 ? '📖' : '📚'}
+          {course?.correlation?.length > 0 ? '📖' : '📚'}
         </List.Indicator>
         <Stack gap={0} justifyContent='flex-start'>
           <Heading size='sm' p={0}>
@@ -154,7 +155,7 @@ function SelectableCourse({ onClick, course }) {
 
 /**
  * @param {object} props
- * @param {Course} props.selectedCourse
+ * @param {FrontCourse} props.selectedCourse
  */
 function SelectedCourse({ selectedCourse }) {
   const description =
@@ -169,7 +170,7 @@ function SelectedCourse({ selectedCourse }) {
         </Heading>
         <Text color='fg.muted'>{description}</Text>
       </Stack>
-      <Show when={!!selectedCourse.classCourses.length}>
+      <Show when={!!selectedCourse.correlation.length}>
         <Stack
           color='fg.muted'
           flexDirection='row'
@@ -180,12 +181,12 @@ function SelectedCourse({ selectedCourse }) {
             <SiGoogleclassroom />
           </Icon>
           <Box as='span'>
-            {selectedCourse.classCourses
+            {selectedCourse.correlation
               .map(
                 /**
-                 * @param {Course['classCourses']} klass
+                 * @param {FrontCourseCorrelation} klass
                  */
-                (klass) => capitalize(klass.classe.name),
+                (klass) => capitalize(klass.className),
               )
               .join(' | ')}
           </Box>

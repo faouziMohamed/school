@@ -1,90 +1,16 @@
 'use client';
 
-import { CalendarHeader } from './calendar-header';
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
 import { WeeklySchedule } from './weekly-schedule';
-import { genSequence } from '@/lib/helpers/utils';
-import { Box, Flex, Tabs } from '@chakra-ui/react';
-import { useState } from 'react';
-import { FaChalkboardTeacher } from 'react-icons/fa';
-import { PiStudentFill } from 'react-icons/pi';
+import { AddScheduleModal } from '@/components/ui/schedule/add-schedule-modal';
+import { LoadingSchedules } from '@/components/ui/schedule/loading-schedules';
+import { NoClassSelectedEmptyState } from '@/components/ui/schedule/no-class-selected-empty-state';
+import { SelectClassForScheduleView } from '@/components/ui/schedule/select-class-for-schedule-view';
+import { useClassScheduleQuery } from '@/lib/packages/schedules/schedule.queries';
+import { Box, createListCollection, Flex, Show, Tabs } from '@chakra-ui/react';
+import { useMemo, useState } from 'react';
 import { SiGoogleclassroom } from 'react-icons/si';
-
-const genId = genSequence();
-const mockScheduleData = [
-  {
-    id: genId(),
-    courseId: 'MATH101',
-    courseName: 'Mathematics',
-    startAt: '2024-02-02T08:30:00',
-    endAt: '2024-02-02T11:40:00',
-    teacherName: 'Dr. Smith',
-    className: 'Terminal S',
-  },
-  {
-    id: genId(),
-    courseId: 'ENG101',
-    courseName: 'English',
-    startAt: '2024-02-01T09:15:00',
-    endAt: '2024-02-01T12:30:00',
-    teacherName: 'Dr. Faouzi',
-    className: 'CM2',
-  },
-  {
-    id: genId(),
-    courseId: 'PHYS101',
-    courseName: 'Physics',
-    startAt: '2024-01-31T14:30:00',
-    endAt: '2024-01-31T16:25:00',
-    teacherName: 'Dr. Faouzi',
-    className: 'CM2',
-  },
-  {
-    id: genId(),
-    courseId: 'TECH101',
-    courseName: 'Technology',
-    startAt: '2024-01-29T12:30:00',
-    endAt: '2024-01-29T15:55:00',
-    teacherName: 'Prof. John',
-    className: 'Terminal S',
-  },
-  {
-    id: genId(),
-    courseId: 'BIO101',
-    courseName: 'Biology',
-    startAt: '2024-01-30T10:40:00',
-    endAt: '2024-01-30T12:30:00',
-    teacherName: 'Dr. Faouzi',
-    className: 'CM2',
-  },
-  {
-    id: genId(),
-    courseId: 'HIST101',
-    courseName: 'History',
-    startAt: '2024-01-30T08:30:00',
-    endAt: '2024-01-30T13:40:00',
-    teacherName: 'Dr. Smith',
-    className: 'Terminal S',
-  },
-  {
-    id: genId(),
-    courseId: 'CHEM101',
-    courseName: 'Chemistry',
-    startAt: '2024-01-30T14:30:00',
-    endAt: '2024-01-30T16:25:00',
-    teacherName: 'Dr. Faouzi',
-    className: 'CM2',
-  },
-  {
-    id: genId(),
-    courseId: 'GEO101',
-    courseName: 'Geography',
-    startAt: '2024-01-29T12:30:00',
-    endAt: '2024-01-29T15:55:00',
-    teacherName: 'Prof. John',
-    className: 'Terminal S',
-  },
-];
-console.log(mockScheduleData);
 
 const WEEK_DAYS = [
   'Monday',
@@ -99,13 +25,32 @@ const WEEK_DAYS = [
 const TIME_SLOTS = Array.from({ length: 32 }, (_, i) => i / 2 + 7); // 7 AM to 7 PM
 const TABS = {
   class: 'class',
-  teacher: 'teacher',
-  student: 'student',
+  // teacher: 'teacher',
+  // student: 'student',
 };
 
-export function ScheduleView() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-
+/**
+ * @param {Object} props
+ * @param {FrontUserClass[]} props.classes
+ * @param {boolean} [props.isAdmin=false]
+ */
+export function ScheduleView({ classes = [] }) {
+  const [value, setValue] = useState([]);
+  const [klass, setKlass] = useState(null);
+  const { data, isLoading } = useClassScheduleQuery({ classId: klass?.id });
+  const classCollection = useMemo(
+    /**
+     * @returns {import('@chakra-ui/react').ListCollection<FrontUserClass>}
+     */
+    () => {
+      return createListCollection({
+        items: classes || [],
+        itemToString: (item) => item.name,
+        itemToValue: (item) => item.id,
+      });
+    },
+    [classes],
+  );
   return (
     <Box
       w='100%'
@@ -123,72 +68,55 @@ export function ScheduleView() {
         gap='1rem'
       >
         <Flex
-          direction={{ base: 'column', md: 'row' }}
+          direction={{ base: 'column', sm: 'row' }}
           justify='space-between'
-          align={{ base: 'stretch', md: 'center' }}
+          align={{ base: 'stretch', sm: 'center' }}
           gap={4}
         >
           <Tabs.List>
-            <Tabs.Trigger value={TABS.class}>
-              <Flex align='center' gap={2}>
-                <SiGoogleclassroom size='1.3rem' />
-                <Box>Class View</Box>
-              </Flex>
-            </Tabs.Trigger>
-            <Tabs.Trigger value={TABS.teacher}>
-              <Flex align='center' gap={2}>
-                <FaChalkboardTeacher size='1.3rem' />
-                <Box>Teacher View</Box>
-              </Flex>
-            </Tabs.Trigger>
-            <Tabs.Trigger value={TABS.student}>
-              <Flex align='center' gap={2}>
-                <PiStudentFill size='1.3rem' />
-                <Box>Student View</Box>
-              </Flex>
-            </Tabs.Trigger>
+            {Object.values(TABS).map((tab) => (
+              <Tabs.Trigger value={tab} key={tab}>
+                <Flex align='center' gap={2}>
+                  <SiGoogleclassroom size='1.3rem' />
+                  <Box>Class View</Box>
+                </Flex>
+              </Tabs.Trigger>
+            ))}
             <Tabs.Indicator rounded='l2' />
           </Tabs.List>
-
-          <CalendarHeader
-            currentDate={currentDate}
-            onPreviousWeek={() => {
-              const newDate = new Date(currentDate);
-              newDate.setDate(currentDate.getDate() - 7);
-              setCurrentDate(newDate);
-            }}
-            onNextWeek={() => {
-              const newDate = new Date(currentDate);
-              newDate.setDate(currentDate.getDate() + 7);
-              setCurrentDate(newDate);
-            }}
-          />
+          <Flex gap={2} flexWrap={{ base: 'wrap' }} align='center'>
+            <SelectClassForScheduleView
+              collection={classCollection}
+              value={value}
+              onValueChange={(e) => {
+                const [v] = e.value;
+                setValue(e.value);
+                const found = classes.find((c) => c.id === v);
+                setKlass(found);
+              }}
+            />
+            <Show when={klass}>
+              <AddScheduleModal klass={klass} />
+            </Show>
+          </Flex>
         </Flex>
 
-        <Tabs.Content p={0} value={TABS.class}>
-          <WeeklySchedule
-            scheduleData={mockScheduleData}
-            weekDays={WEEK_DAYS}
-            timeSlots={TIME_SLOTS}
-            currentDate={currentDate}
-          />
-        </Tabs.Content>
-        <Tabs.Content p={0} value={TABS.teacher}>
-          <WeeklySchedule
-            scheduleData={mockScheduleData}
-            weekDays={WEEK_DAYS}
-            timeSlots={TIME_SLOTS}
-            currentDate={currentDate}
-          />
-        </Tabs.Content>
-        <Tabs.Content p={0} value={TABS.student}>
-          <WeeklySchedule
-            scheduleData={mockScheduleData}
-            weekDays={WEEK_DAYS}
-            timeSlots={TIME_SLOTS}
-            currentDate={currentDate}
-          />
-        </Tabs.Content>
+        <Show
+          when={klass && !isLoading}
+          fallback={
+            isLoading ? <LoadingSchedules /> : <NoClassSelectedEmptyState />
+          }
+        >
+          {Object.values(TABS).map((tab) => (
+            <Tabs.Content p={0} value={tab} key={tab}>
+              <WeeklySchedule
+                scheduleData={data}
+                weekDays={WEEK_DAYS}
+                timeSlots={TIME_SLOTS}
+              />
+            </Tabs.Content>
+          ))}
+        </Show>
       </Tabs.Root>
     </Box>
   );

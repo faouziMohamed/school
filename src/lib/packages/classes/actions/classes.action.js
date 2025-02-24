@@ -1,6 +1,7 @@
 'use server';
 
 import { createNewClass } from '@/lib/packages/classes/classes.service';
+import { ROUTES } from '@/lib/routes/client.route';
 import { revalidatePath } from 'next/cache';
 
 /**
@@ -17,7 +18,8 @@ export async function submitCreateNewClass(previous, formData) {
     const data = Object.fromEntries(formData);
 
     await createNewClass(data);
-    revalidatePath('/class-rooms');
+    revalidatePath(ROUTES.CLASS_ROOMS);
+    revalidatePath(ROUTES.SCHEDULES);
     return { success: true, error: null };
   } catch (e) {
     console.error(e);

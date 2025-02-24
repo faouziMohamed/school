@@ -1,6 +1,5 @@
 import {
   Classe as klass,
-  Course as Kourse,
   Student as IStudent,
   StudentAttendance as IStudentAttendance,
   StudentNotification as IStudentNotification,
@@ -11,6 +10,7 @@ import {
   UserRole as Role,
 } from '@prisma/client';
 
+export type ApiError = { error: string; status: number };
 export type FrontUser = {
   id: number;
   firstName: string;
@@ -25,9 +25,19 @@ export type FrontUser = {
 };
 
 type FrontUserClass = {
+  id: number;
   name: string;
   description: string;
   slug: string;
+  stats: {
+    teachers: number;
+    students: number;
+    courses: number;
+  };
+};
+
+export type FrontTeacher = FrontUser & {
+  classTeacherId: number;
 };
 
 export type FrontUserWithToken = FrontUser & {
@@ -49,14 +59,49 @@ export type UserNotification = IUserNotification;
 export type Classe = klass & {
   id: number;
   slug: string;
-  _count: { classTeacher: number; classCourse: number; classStudent: number };
+  _count: {
+    classTeachers: number;
+    classStudents: number;
+  };
 };
 
-export type Course = Kourse & {
+export type ShortFrontClasse = {
+  id: number;
+  name: string;
   description: string;
-  classCourses: {
-    classe: { name: string; description: string; slug: string };
-  };
+  slug: string;
+};
+
+export type FrontCourseCorrelation = {
+  correlationId: number;
+  teacherId: number;
+  teacherUrl: string;
+  classId: number;
+  classSlug: string;
+  className: string;
+};
+export type FrontCourse = {
+  id: number;
+  name: string;
+  description: string;
+  slug: string;
+  url: string;
+  correlation: FrontCourseCorrelation[];
+};
+
+export type ShortFrontCourse = Omit<FrontCourse, 'url' | 'correlation'>;
+
+export type SingularFrontCourseCorrelation = {
+  classTeacherId: number;
+  teacherId: number;
+  classId: number;
+};
+export type SingularFrontCourse = {
+  id: number;
+  name: string;
+  description: string;
+  slug: string;
+  correlation: SingularFrontCourseCorrelation;
 };
 
 export type StudentAttendance = IStudentAttendance;
@@ -113,13 +158,47 @@ export type CreateNewCourseInput = {
   name: string;
   description: string;
 };
+export type CreateNewCourseBody = CreateNewCourseInput & {
+  classId: number;
+  classTeacherId: number;
+};
 
-export type ScheduleData = {
+export type ScheduleTime = `${number | string}:${number | string}`;
+export type FrontScheduleData = {
   id: string;
-  courseId: string;
-  courseName: string;
-  startAt: string | Date;
-  endAt: string | Date;
-  teacherName: string;
+  correlationId: number;
+  day: WorkDay;
+  startTime: ScheduleTime;
+  endTime: ScheduleTime;
+  note: string;
+  course: ShortFrontCourse;
+  classe: ShortFrontClasse;
+  teacher: FrontUser;
+};
+
+export type ClassSchedule = {
+  classId: string;
   className: string;
+  schedules: FrontScheduleData[];
+};
+
+export type WorkDay =
+  | 'monday'
+  | 'tuesday'
+  | 'wednesday'
+  | 'thursday'
+  | 'friday'
+  | 'saturday';
+
+export type CreateScheduleInput = {
+  courseId: number;
+  day: WorkDay;
+  startTime: string;
+  endTime: string;
+  note: string;
+};
+
+export type CreateScheduleBody = CreateScheduleInput & {
+  classId: number;
+  classTeacherId: number;
 };

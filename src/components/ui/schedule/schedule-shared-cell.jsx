@@ -1,6 +1,5 @@
 import { adjustColorBrightness, stringToHexColors } from '@/lib/helpers/utils';
 import {
-  formatTime,
   shouldDisplayEndTime,
   shouldDisplayStartTime,
 } from '@/lib/packages/schedules/schedules.utils';
@@ -11,16 +10,16 @@ import { CgCornerDownLeft, CgCornerDownRight } from 'react-icons/cg';
  * @param {Object} props
  * @param {number} props.currentHour
  * @param {boolean} props.inThe30MinSlot
- * @param {ScheduleData} props.schedule
+ * @param {FrontScheduleData} props.schedule
  */
 export function ScheduleSharedCell({ currentHour, inThe30MinSlot, schedule }) {
-  const colors = stringToHexColors(schedule.courseName, 120);
+  const colors = stringToHexColors(schedule.course.name, 120);
   const { backgroundColor, foregroundColor } = colors;
   const borderColor = adjustColorBrightness(backgroundColor, -40);
-  const tagStColor = stringToHexColors(schedule.courseName, -70);
+  const tagStColor = stringToHexColors(schedule.course.name, -70);
   const { backgroundColor: stBg, foregroundColor: stFg } = tagStColor;
 
-  const tagEndColor = stringToHexColors(schedule.courseName, -30);
+  const tagEndColor = stringToHexColors(schedule.course.name, -30);
   const { backgroundColor: endBg, foregroundColor: endFg } = tagEndColor;
   return (
     <Box
@@ -31,14 +30,14 @@ export function ScheduleSharedCell({ currentHour, inThe30MinSlot, schedule }) {
       borderRadius='md'
       flexGrow={1}
     >
-      <Text fontSize='xs' fontWeight='medium' color={foregroundColor}>
-        {schedule.courseName}
+      <Text fontSize='1rem' fontWeight='medium' color={foregroundColor}>
+        {schedule.course.name}
       </Text>
-      <Text fontSize='xs' color='gray.600'>
-        {schedule.teacherName}
+      <Text fontSize='0.88rem' color='gray.600'>
+        {schedule.teacher.firstName} {schedule.teacher.lastName}
       </Text>
-      <Text fontSize='xs' color='gray.600'>
-        {schedule.className}
+      <Text fontSize='0.88rem' color='gray.600'>
+        {schedule.classe.name}
       </Text>
       <Box pt={2}>
         {shouldDisplayStartTime(currentHour, schedule, inThe30MinSlot) && (
@@ -46,7 +45,7 @@ export function ScheduleSharedCell({ currentHour, inThe30MinSlot, schedule }) {
             <Tag.StartElement>
               <CgCornerDownRight />
             </Tag.StartElement>
-            <Tag.Label>{formatTime(schedule.startAt)}</Tag.Label>
+            <Tag.Label>{schedule.startTime}</Tag.Label>
           </Tag.Root>
         )}
         {shouldDisplayEndTime(currentHour, schedule, inThe30MinSlot) && (
@@ -54,7 +53,7 @@ export function ScheduleSharedCell({ currentHour, inThe30MinSlot, schedule }) {
             <Tag.StartElement>
               <CgCornerDownLeft />
             </Tag.StartElement>
-            <Tag.Label>{formatTime(schedule.endAt)}</Tag.Label>
+            <Tag.Label>{schedule.startTime}</Tag.Label>
           </Tag.Root>
         )}
       </Box>

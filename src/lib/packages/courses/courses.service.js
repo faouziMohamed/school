@@ -1,5 +1,11 @@
-import { COURSE_SEARCH_SELECT, COURSE_SELECT } from './course.constant';
+import {
+  CLASS_COURSE_CO_SELECT,
+  CLASS_TEACHER_SELECT,
+  COURSE_SEARCH_SELECT,
+  COURSE_SELECT,
+} from './course.constant';
 import prisma from '@/lib/db/prisma.orm';
+import { capitalize } from '@/lib/helpers/utils';
 
 /**
  * @param {Object} data
@@ -18,16 +24,6 @@ export async function createNewCourse(data) {
         id: true,
         name: true,
         description: true,
-        // classe: {
-        //   select: {
-        //     id: true,
-        //     name: true,
-        //     description: true,
-        //   },
-        // },
-        // teacher: {
-        //   select: USER_SELECT,
-        // },
       },
     });
   } catch (error) {
@@ -40,7 +36,7 @@ export async function createNewCourse(data) {
  * @param {string} slug
  */
 export async function findCourseBySlug(slug) {
-  return prisma.course.findFirst({
+  return prisma.course.findUnique({
     where: { slug },
     select: COURSE_SELECT,
   });
@@ -67,7 +63,7 @@ export async function getAllCourses() {
 /**
  * @param {string} name
  */
-export async function searchStudentsByName(name) {
+export async function searchCoursesByName(name) {
   try {
     return prisma.course.findMany({
       where: {
@@ -84,13 +80,14 @@ export async function searchStudentsByName(name) {
 /**
  * @param {number} classId
  */
-export async function getCoursesByClassId(classId) {
-  return prisma.course.findMany({
-    where: {
-      classId: Number(classId),
+export async function findCoursesByClassId(classId) {
+  const classCourse = await prisma.classTeacherCourse.findMany({
+    where: { classId: Number(classId) },
+    select: {
+      course: { select: CLASS_COURSE_CO_SELECT },
     },
-    select: COURSE_SELECT,
   });
+  return classCourse.map((cc) => cc.course);
 }
 
 /**
@@ -197,5 +194,65 @@ export async function getAllCourseSchedulesByCourseId(courseId) {
       endAt: true,
       note: true,
     },
+  });
+}
+
+/**
+ * @param {number} classId
+ */
+export async function getCourseByClassId(classId) {
+  const jointCtc = await prisma.classTeacherCourse.findMany({
+    where: {
+      classTeacher: {
+        classe: { id: Number(classId) },
+      },
+    },
+    select: CLASS_TEACHER_SELECT,
+  });
+  return jointCtc.map((jcc) => ({
+    ...jcc.course,
+    correlation: {
+      correlationId: jcc.id,
+      classTeacherId: jcc.classTeacher.id,
+      teacherId: jcc.classTeacher.teacherId,
+      classId: jcc.classTeacher.classId,
+    },
+  }));
+}
+
+export async function assignCourseToTeacherOnClassByIds(
+  courseId,
+  classTeacherId,
+) {
+  return prisma.classTeacherCourse.create({
+    data: {
+      classTeacher: { connect: { id: Number(classTeacherId) } },
+      course: { connect: { id: Number(courseId) } },
+    },
+    select: CLASS_TEACHER_SELECT,
+  });
+}
+
+/**
+ * Create a new class course
+ * @param {CreateNewCourseBody} data
+ * @param {string} courseSlug
+ */
+export async function createAndAssignCourseToTeacherOnClassByIds(
+  data,
+  courseSlug,
+) {
+  return prisma.classTeacherCourse.create({
+    data: {
+      classTeacher: { connect: { id: Number(data.classTeacherId) } },
+      course: {
+        create: {
+          name: capitalize(data.name),
+          description: capitalize(data.description),
+          slug: courseSlug,
+        },
+      },
+    },
+    select: CLASS_TEACHER_SELECT,
   });
 }

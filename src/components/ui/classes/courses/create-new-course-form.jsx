@@ -1,8 +1,8 @@
 import { Field, Input } from '@/components/ui/field';
 import { requiredFielConfig } from '@/components/ui/modules/auth/use-register-form';
 import { toaster } from '@/components/ui/toaster';
+import { useCreateCourseMutation } from '@/lib/packages/courses/courses.queries';
 import { Button, Fieldset, Stack, Textarea } from '@chakra-ui/react';
-import { startTransition, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 /**
@@ -17,19 +17,15 @@ const defaultValues = {
  *
  * @param {object} props
  * @param {() => void} props.onClose
- * @param {any} props.state
- * @param {(formData:FormData) => void} props.action
- * @param {boolean} props.isPending
+ * @param {(val:boolean) => void} props.setSubmitting
  * @param {Classe} props.klass
- * @param {FrontUserRole} props.role
+ * @param {FrontTeacher} props.teacher
  */
 export function CreateNewCourseForm({
   onClose,
-  state,
-  action,
-  isPending,
+  setSubmitting,
   klass,
-  role,
+  teacher,
 }) {
   /**
    * @type {import('react-hook-form').UseFormReturn<CreateNewCourseInput> }
@@ -43,31 +39,37 @@ export function CreateNewCourseForm({
     formState: { errors },
   } = form;
 
-  useEffect(() => {
-    if (state.success) {
-      toaster.success({
-        title: `Course created successfully`,
-      });
+  const createCourseMutation = useCreateCourseMutation({ classId: klass.id });
+
+  const onSubmit = handleSubmit(async (data) => {
+    const body = {
+      ...data,
+      classTeacherId: teacher.id,
+      classId: klass.id,
+    };
+    console.log('data', body);
+    try {
+      setSubmitting(true);
+      const response = await createCourseMutation.mutateAsync(body);
+      setSubmitting(false);
+      if ('status' in response) {
+        console.log('error', response.error);
+        toaster.error({
+          title: `Failed to create the course`,
+          description: response.error,
+        });
+        return;
+      }
+      toaster.success({ title: `Course created successfully` });
+      reset();
       onClose?.();
-      state.success = false;
-    } else if (state.error) {
+    } catch (error) {
+      setSubmitting(false);
+      console.log('error', error);
       toaster.error({
         title: `Failed to create the course`,
-        description: state.error,
       });
     }
-  }, [onClose, reset, role, state]);
-
-  const onSubmit = handleSubmit((data) => {
-    startTransition(() => {
-      const formData = new FormData();
-      for (const [key, value] of Object.entries(data)) {
-        formData.append(key, value);
-      }
-      formData.append('classId', `${klass.id}`);
-      formData.append('slug', klass.slug);
-      action(formData);
-    });
   });
 
   return (
@@ -129,10 +131,10 @@ export function CreateNewCourseForm({
         <Button
           colorPalette='blue'
           type='submit'
-          loading={isPending}
+          loading={createCourseMutation.isPending}
           loadingText='Saving...'
           spinnerPlacement='start'
-          disabled={isPending}
+          disabled={createCourseMutation.isPending}
         >
           Save
         </Button>

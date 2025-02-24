@@ -4,7 +4,7 @@ import { GridItem, Stack } from '@chakra-ui/react';
 
 /**
  * @param {Object} props
- * @param {ScheduleData[]} props.scheduleData
+ * @param {FrontScheduleData[]} props.scheduleData
  * @param {boolean} props.isInThe30MinSlot
  * @param {number} props.currentHour
  * @param {number} props.dayIndex
@@ -27,7 +27,7 @@ export function ScheduleCell({
       position='relative'
       minH='4rem'
       borderWidth={1}
-      borderColor='gray.200'
+      borderColor='text.disabled'
       borderRadius='md'
       asChild
     >

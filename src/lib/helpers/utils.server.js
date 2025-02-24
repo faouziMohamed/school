@@ -84,7 +84,6 @@ export function findCourseMissingField({ name, description } = {}) {
 export function adaptUserFromDb(newUser, role = 'student') {
   return {
     id: newUser.id,
-    profileId: newUser.profile.id,
     role: role.toLowerCase(),
     firstName: newUser.profile.firstName,
     lastName: newUser.profile.lastName,
@@ -135,5 +134,38 @@ export function getTeacherWithClasses(user) {
       description: classTeacher.classe.description,
       slug: classTeacher.classe.slug,
     })),
+  };
+}
+
+/**
+ * @returns {FrontScheduleData}
+ */
+export function dbScheduleToFrontSchedule(schedule) {
+  const { classTeacherCourseId, classTeacherCourse } = schedule;
+  const { classTeacher, course } = classTeacherCourse;
+  const { classe, teacher } = classTeacher;
+  /** @type {FrontUser} */
+  const frontTeacher = adaptUserFromDb(teacher, 'teacher');
+  frontTeacher.role = undefined;
+  return {
+    id: Number(schedule.id),
+    correlationId: Number(classTeacherCourseId),
+    day: String(schedule.day).toLowerCase(),
+    startTime: schedule.startTime,
+    endTime: schedule.endTime,
+    note: schedule.note,
+    course: {
+      id: Number(course.id),
+      name: course.name,
+      slug: course.slug,
+      description: course.description,
+    },
+    teacher: frontTeacher,
+    classe: {
+      id: Number(classe.id),
+      name: classe.name,
+      slug: classe.slug,
+      description: classe.description,
+    },
   };
 }

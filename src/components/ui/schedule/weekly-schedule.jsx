@@ -5,18 +5,11 @@ import { Box, For, Grid, GridItem, Stack, Text } from '@chakra-ui/react';
 
 /**
  * @param {Object} props
- * @param {ScheduleData[]} props.scheduleData
+ * @param {FrontScheduleData[]} props.scheduleData
  * @param {string[]} props.weekDays
  * @param {number[]} props.timeSlots
- * @param {Date} props.currentDate
  */
-export function WeeklySchedule({
-  scheduleData,
-  weekDays,
-  timeSlots,
-  currentDate,
-}) {
-  console.log(currentDate);
+export function WeeklySchedule({ scheduleData, weekDays, timeSlots }) {
   return (
     <Box overflowX='auto' w='100%'>
       <Box minW='800px' w='100%'>
@@ -29,13 +22,14 @@ export function WeeklySchedule({
             const { currentHour, isInThe30MinSlot } = currentTimeSlot(timeSlot);
             const hour =
               Number(currentHour) < 10 ? `0${currentHour}` : currentHour;
+            // const time = `${hour}:${isInThe30MinSlot ? '30' : '00'}`;
             return (
               <Grid
                 gap={2}
                 key={timeSlot}
                 templateColumns='100px repeat(6, 1fr)'
               >
-                <GridItem>
+                <GridItem alignContent='center'>
                   <Text fontSize='sm' color='gray.600'>
                     {isInThe30MinSlot ? `${hour}:30` : `${hour}:00`}
                   </Text>

@@ -1,6 +1,23 @@
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import slugify from 'slugify';
+
+dayjs.extend(customParseFormat);
+
+export const WEEK_DAYS = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+];
+
+export const WORK_DAYS = WEEK_DAYS.slice(0, 5);
+export const MIN_START_HOUR = '08:00';
+export const MAX_END_HOUR = '19:30';
 
 export const emailRegex =
   /^(([^\s"(),.:;<>@[\\\]]+(\.[^\s"(),.:;<>@[\\\]]+)*)|(".+"))@((\[(?:\d{1,3}\.){3}\d{1,3}])|(([\dA-Za-z-]+\.)+[A-Za-z]{2,}))$/;
@@ -128,4 +145,76 @@ export function adjustColorBrightness(color, brightnessAdjustment) {
   b = Math.min(Math.max(b + brightnessAdjustment, 0), 255);
 
   return `#${('00' + r.toString(16)).slice(-2)}${('00' + g.toString(16)).slice(-2)}${('00' + b.toString(16)).slice(-2)}`;
+}
+
+/**
+ * Get the start date of the week containing the given date
+ * @param {Date} currentDate - The date to use as a reference
+ * @returns {Date}
+ */
+function getStartOfWeekFromDate(currentDate) {
+  const startOfWeek = new Date(currentDate);
+  startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1);
+  return startOfWeek;
+}
+
+/**
+ * Get the end date of the week containing the given date
+ * @param {Date} startOfWeek - The start date of the week
+ * @returns {Date}
+ */
+function getEndOfWeekFromDate(startOfWeek) {
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  return endOfWeek;
+}
+
+/**
+ * Get the start and end dates of the week containing the current date
+ * @param {Date} date - The date to use as a reference
+ * @returns {{startOfWeek: Date, endOfWeek: Date}}
+ */
+export function getStartAndEndOfWeek(date) {
+  const startOfWeek = getStartOfWeekFromDate(date);
+  const endOfWeek = getEndOfWeekFromDate(startOfWeek);
+  return { startOfWeek, endOfWeek };
+}
+
+/**
+ * Parse time string to dayjs object
+ * @param {string} time - Time string in HH:mm format
+ * @returns {dayjs.Dayjs|null}
+ */
+export function parseTime(time) {
+  const parsedTime = dayjs(time, 'HH:mm');
+  return parsedTime.isValid() ? parsedTime : null;
+}
+
+/**
+ * Compare two time strings (HH:mm format) {link dayjs}
+ * @param {string} time1 - First time string
+ * @param {string} time2 - Second time string
+ * @returns {number} - 1 if time1 is greater, -1 if time2 is greater, 0 if equal, Number.NaN if one of the times is invalid
+ */
+export function compareTimes(time1, time2) {
+  const parsedTime1 = parseTime(time1);
+  const parsedTime2 = parseTime(time2);
+
+  if (!parsedTime1 || !parsedTime2) {
+    return Number.NaN;
+  }
+
+  if (!parsedTime1 || !parsedTime2) {
+    return 0;
+  }
+
+  if (parsedTime1.isAfter(parsedTime2)) {
+    return 1;
+  }
+
+  if (parsedTime1.isBefore(parsedTime2)) {
+    return -1;
+  }
+
+  return 0;
 }

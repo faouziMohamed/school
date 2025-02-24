@@ -3,21 +3,39 @@ export const COURSE_SELECT = {
   name: true,
   description: true,
   slug: true,
-  classCourses: {
+  classTeacherCourses: {
     select: {
       id: true,
-      classId: true,
-      classe: {
+      classTeacher: {
         select: {
-          name: true,
-          slug: true,
+          teacherId: true,
+          classId: true,
+          classe: { select: { name: true, slug: true } },
         },
       },
     },
   },
 };
 
-export const CLASS_COURSE_SELECT = {
+export const CLASS_TEACHER_SELECT = {
+  id: true,
+  classTeacher: {
+    select: {
+      id: true,
+      teacherId: true,
+      classId: true,
+    },
+  },
+  course: {
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      slug: true,
+    },
+  },
+};
+export const CLASS_COURSE_CO_SELECT = {
   id: true,
   name: true,
   description: true,
@@ -28,6 +46,13 @@ export const CLASS_COURSE_SELECT = {
       classId: true,
     },
   },
+};
+
+export const COURSE_CLASS_COURSE_SELECT = {
+  id: true,
+  name: true,
+  slug: true,
+  description: true,
 };
 
 export const COURSE_SEARCH_SELECT = {
@@ -35,14 +60,14 @@ export const COURSE_SEARCH_SELECT = {
   name: true,
   description: true,
   slug: true,
-  classCourses: {
+  classTeacherCourses: {
     select: {
       id: true,
-      classId: true,
-      classe: {
+      classTeacher: {
         select: {
-          name: true,
-          slug: true,
+          teacherId: true,
+          classId: true,
+          classe: { select: { name: true, slug: true } },
         },
       },
     },

@@ -61,24 +61,24 @@ model User {
 }
 
 model Classe {
-  id           Int            @id @default(autoincrement())
-  name         String         @unique
-  slug         String         @unique
-  description  String?        @db.Text
-  classTeacher ClassTeacher[]
-  classCourse  ClassCourse[]
-  classStudent ClassStudent[]
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  slug          String         @unique
+  description   String?        @db.Text
+  classTeachers ClassTeacher[]
+  classStudents ClassStudent[]
 
   @@index([name, slug])
   @@map("classes")
 }
 
 model ClassTeacher {
-  id        Int    @id @default(autoincrement())
-  teacherId Int    @map("teacher_id")
-  classId   Int    @map("class_id")
-  teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  classe    Classe @relation(fields: [classId], references: [id], onDelete: Cascade)
+  id                  Int                  @id @default(autoincrement())
+  teacherId           Int                  @map("teacher_id")
+  classId             Int                  @map("class_id")
+  teacher             User                 @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  classe              Classe               @relation(fields: [classId], references: [id], onDelete: Cascade)
+  classTeacherCourses ClassTeacherCourse[]
 
   @@unique([teacherId, classId])
   @@map("class_teachers")
@@ -96,39 +96,41 @@ model ClassStudent {
 }
 
 model Course {
-  id           Int           @id @default(autoincrement())
-  name         String
-  slug         String        @unique
-  description  String?       @db.Text
-  classCourses ClassCourse[]
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  slug                String               @unique
+  description         String?              @db.Text
+  classTeacherCourses ClassTeacherCourse[]
 
   @@index([slug])
   @@map("courses")
 }
 
-model ClassCourse {
-  id             Int              @id @default(autoincrement())
-  courseId       Int              @map("course_id")
-  classId        Int              @map("class_id")
-  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  classe         Classe           @relation(fields: [classId], references: [id], onDelete: Cascade)
-  courseSchedule CourseSchedule[]
+model ClassTeacherCourse {
+  id             Int             @id @default(autoincrement())
+  classTeacherId Int             @map("class_teacher_id")
+  courseId       Int             @map("course_id")
+  classTeacher   ClassTeacher    @relation(fields: [classTeacherId], references: [id], onDelete: Cascade)
+  course         Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  schedules      ClassSchedule[]
 
-  @@unique([courseId, classId])
-  @@map("class_courses")
+  @@unique([classTeacherId, courseId])
+  @@map("class_teacher_courses")
 }
 
-model CourseSchedule {
-  id                 Int                 @id @default(autoincrement())
-  classCourseId      Int                 @map("class_course_id")
-  classCourse        ClassCourse         @relation(fields: [classCourseId], references: [id], onDelete: Cascade)
-  startAt            DateTime
-  endAt              DateTime
-  note               String?             @default("")
-  teacherAttendances TeacherAttendance[]
-  studentAttendances StudentAttendance[]
+model ClassSchedule {
+  id                   Int                 @id @default(autoincrement())
+  classTeacherCourseId Int                 @map("class_teacher_course_id")
+  day                  WeekDays            @map("day")
+  startTime            String              @map("start_time")
+  endTime              String              @map("end_time")
+  note                 String?             @db.Text
+  classTeacherCourse   ClassTeacherCourse  @relation(fields: [classTeacherCourseId], references: [id], onDelete: Cascade)
+  teacherAttendances   TeacherAttendance[]
+  studentAttendances   StudentAttendance[]
 
-  @@map("course_schedules")
+  @@unique([classTeacherCourseId, day, startTime, endTime])
+  @@map("class_schedules")
 }
 
 model TeacherAttendance {
@@ -136,7 +138,7 @@ model TeacherAttendance {
   teacherId  Int              @map("teacher_id")
   scheduleId Int              @map("schedule_id")
   teacher    User             @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  schedule   CourseSchedule   @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  schedule   ClassSchedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   status     AttendanceStatus
   date       DateTime         @default(now())
 
@@ -149,7 +151,7 @@ model StudentAttendance {
   studentId  Int              @map("student_id")
   scheduleId Int              @map("schedule_id")
   student    Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  schedule   CourseSchedule   @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  schedule   ClassSchedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   status     AttendanceStatus
   date       DateTime         @default(now())
 
@@ -200,4 +202,16 @@ enum NotificationStatus {
   FAILED  @map("failed")
 
   @@map("notification_status")
+}
+
+enum WeekDays {
+  MONDAY    @map("monday")
+  TUESDAY   @map("tuesday")
+  WEDNESDAY @map("wednesday")
+  THURSDAY  @map("thursday")
+  FRIDAY    @map("friday")
+  SATURDAY  @map("saturday")
+  SUNDAY    @map("sunday")
+
+  @@map("week_days")
 }

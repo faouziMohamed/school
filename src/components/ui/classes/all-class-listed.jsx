@@ -8,8 +8,9 @@ import Link from 'next/link';
  * @param {Object} props
  * @param {Classe[]} props.classes
  */
-export function AllClassListed({ classes }) {
+export async function AllClassListed({ classes }) {
   const genId = genSequence(1);
+
   return (
     <Table.ScrollArea borderWidth='1px'>
       <Table.Root
@@ -40,15 +41,9 @@ export function AllClassListed({ classes }) {
               <Table.Cell>{genId()}</Table.Cell>
               <Table.Cell>{klass.name}</Table.Cell>
               <Table.Cell>{klass.description}</Table.Cell>
-              <Table.Cell textAlign='center'>
-                {klass._count.classTeacher}
-              </Table.Cell>
-              <Table.Cell textAlign='center'>
-                {klass._count.classStudent}
-              </Table.Cell>
-              <Table.Cell textAlign='center'>
-                {klass._count.classCourse}
-              </Table.Cell>
+              <Table.Cell textAlign='center'>{klass.stats.teachers}</Table.Cell>
+              <Table.Cell textAlign='center'>{klass.stats.students}</Table.Cell>
+              <Table.Cell textAlign='center'>{klass.stats.courses}</Table.Cell>
               <Table.Cell>
                 <Button colorPalette='blue' size='sm' asChild>
                   <Link href={`/class-rooms/${klass.slug}`}>View</Link>

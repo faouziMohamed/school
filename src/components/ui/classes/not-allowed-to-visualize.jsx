@@ -14,20 +14,6 @@ export function NotAllowedToVisualize() {
   );
 }
 
-export function NotFoundPageState() {
-  return (
-    <EmptyState
-      title='Hmm, You reached a dead end!'
-      description='The class you are looking for does not exist'
-      icon={
-        <Icon fontSize='10rem' color='red'>
-          <TbError404 />
-        </Icon>
-      }
-    />
-  );
-}
-
 export function NoClassFound() {
   return (
     <EmptyState

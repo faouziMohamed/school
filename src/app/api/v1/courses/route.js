@@ -2,17 +2,19 @@ import { getClassById } from '@/lib/packages/classes/classes.service';
 import {
   createNewCourse,
   getAllCourses,
-  searchStudentsByName,
+  searchCoursesByName,
 } from '@/lib/packages/courses/courses.service';
+import { coursesToFrontCourses } from '@/lib/packages/courses/courses.utils';
 import { getUserById } from '@/lib/packages/teachers/teacher.service';
 import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   const search = request.nextUrl.searchParams.get('search');
   const courses = search
-    ? await searchStudentsByName(search)
+    ? await searchCoursesByName(search)
     : await getAllCourses();
-  return NextResponse.json({ data: courses });
+  const courseReformed = coursesToFrontCourses(courses);
+  return NextResponse.json({ data: courseReformed });
 }
 
 export async function POST(request) {

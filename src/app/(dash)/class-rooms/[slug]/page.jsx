@@ -4,13 +4,15 @@ import { ClassRoomCoursesListCard } from '@/components/ui/classes/courses/class-
 import {
   NoClassFound,
   NotAllowedToVisualize,
-  NotFoundPageState,
 } from '@/components/ui/classes/not-allowed-to-visualize';
 import { ClassRoomUsersListCard } from '@/components/ui/classes/users/class-room-users-list-card';
+import { ErrorPage } from '@/components/ui/shared/error-page';
 import { capitalize } from '@/lib/helpers/utils';
 import { getClassBySlug } from '@/lib/packages/classes/classes.service';
-import { Card, Heading, Show, Stack, Tabs } from '@chakra-ui/react';
+import { getCourseByClassId } from '@/lib/packages/courses/courses.service';
+import { Card, Heading, Show, Spinner, Stack, Tabs } from '@chakra-ui/react';
 import { getServerSession } from 'next-auth';
+import { Suspense } from 'react';
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import { FaBook } from 'react-icons/fa6';
 import { LuUser } from 'react-icons/lu';
@@ -44,20 +46,10 @@ export default async function ClassRoomsPage({ params: nextParams }) {
    */
   const klass = await getClassBySlug(slug);
   if (!klass) {
-    return (
-      <Stack
-        h='100%'
-        alignItems='center'
-        justifyContent='center'
-        bgColor='red.50'
-        boxShadow='md'
-        rounded='lg'
-        p='1rem'
-      >
-        <NotFoundPageState />
-      </Stack>
-    );
+    return <ErrorPage />;
   }
+  const courses = await getCourseByClassId(klass.id);
+
   return (
     <Stack gap='0.7rem' overflowX='hidden' w='100%'>
       <Card.Root w='100%'>
@@ -69,7 +61,9 @@ export default async function ClassRoomsPage({ params: nextParams }) {
         <NoClassFound />
       </Show>
       <Show when={klass}>
-        <ClassStatsWithActions klass={klass} />
+        <Suspense fallback={<Spinner />}>
+          <ClassStatsWithActions klass={klass} courses={courses} />
+        </Suspense>
       </Show>
 
       <Tabs.Root
