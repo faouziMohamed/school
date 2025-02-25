@@ -6,6 +6,7 @@ import { GrSchedule } from 'react-icons/gr';
 import { MdBook, MdHome, MdOutlineSettingsApplications } from 'react-icons/md';
 import { PiReadCvLogoDuotone, PiUsersDuotone } from 'react-icons/pi';
 import { SiGoogleclassroom } from 'react-icons/si';
+import { TbAffiliateFilled } from 'react-icons/tb';
 
 const genId = genSequence();
 /**
@@ -69,6 +70,14 @@ export const navBarItems = [
     permissions: ['student', 'teacher', 'admin'],
     Icon: <GrSchedule />,
     description: 'View the schedule of all courses and classes',
+  },
+  {
+    id: genId(),
+    name: 'Attendances',
+    href: ROUTES.ATTENDANCES,
+    permissions: ['admin'],
+    Icon: <TbAffiliateFilled />,
+    description: 'Manage attendances of teachers and students',
   },
   {
     id: genId(),
